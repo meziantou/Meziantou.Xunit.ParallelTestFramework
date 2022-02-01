@@ -43,4 +43,4 @@ public class SequentialTests
 ````
 
 
-The code is greatly inspired by @tmort93: https://github.com/xunit/xunit/issues/1986#issuecomment-831322722
+The code is greatly inspired by the sample from [Travis Mortimer](https://github.com/tmort93): <https://github.com/xunit/xunit/issues/1986#issuecomment-831322722>
