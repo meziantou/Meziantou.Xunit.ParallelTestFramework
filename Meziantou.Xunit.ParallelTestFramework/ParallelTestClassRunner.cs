@@ -1,4 +1,5 @@
 using System.Reflection;
+using Xunit;
 using Xunit.Abstractions;
 using Xunit.Sdk;
 
@@ -15,6 +16,12 @@ public class ParallelTestClassRunner : XunitTestClassRunner
     // https://github.com/xunit/xunit/blob/2.4.2/src/xunit.execution/Sdk/Frameworks/Runners/TestClassRunner.cs#L194-L219
     protected override async Task<RunSummary> RunTestMethodsAsync()
     {
+        var disableParallelization = TestClass.Class.GetCustomAttributes(typeof(DisableParallelizationAttribute)).Any()
+            || TestClass.Class.GetCustomAttributes(typeof(CollectionAttribute)).Any();
+
+        if (disableParallelization)
+            return await base.RunTestMethodsAsync().ConfigureAwait(false);
+
         var summary = new RunSummary();
         IEnumerable<IXunitTestCase> orderedTestCases;
         try

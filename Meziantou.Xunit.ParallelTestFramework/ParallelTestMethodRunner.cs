@@ -1,3 +1,4 @@
+using Xunit;
 using Xunit.Abstractions;
 using Xunit.Sdk;
 
@@ -14,9 +15,15 @@ public class ParallelTestMethodRunner : XunitTestMethodRunner
     // https://github.com/xunit/xunit/blob/2.4.2/src/xunit.execution/Sdk/Frameworks/Runners/TestMethodRunner.cs#L130-L142
     protected override async Task<RunSummary> RunTestCasesAsync()
     {
+        var disableParallelization = TestMethod.Method.GetCustomAttributes(typeof(DisableParallelizationAttribute)).Any()
+            || TestMethod.Method.GetCustomAttributes(typeof(MemberDataAttribute)).Any(a => a.GetNamedArgument<bool>(nameof(MemberDataAttribute.DisableDiscoveryEnumeration)));
+
+        if (disableParallelization)
+            return await base.RunTestCasesAsync().ConfigureAwait(false);
+
         var summary = new RunSummary();
 
-        var caseTasks = TestCases.Select(c => RunTestCaseAsync(c));
+        var caseTasks = TestCases.Select(RunTestCaseAsync);
         var caseSummaries = await Task.WhenAll(caseTasks).ConfigureAwait(false);
 
         foreach (var caseSummary in caseSummaries)
