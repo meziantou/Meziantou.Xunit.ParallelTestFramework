@@ -6,9 +6,14 @@ namespace Meziantou.Xunit;
 
 public class ParallelTestMethodRunner : XunitTestMethodRunner
 {
+    readonly object[] constructorArguments;
+    readonly IMessageSink diagnosticMessageSink;
+
     public ParallelTestMethodRunner(ITestMethod testMethod, IReflectionTypeInfo @class, IReflectionMethodInfo method, IEnumerable<IXunitTestCase> testCases, IMessageSink diagnosticMessageSink, IMessageBus messageBus, ExceptionAggregator aggregator, CancellationTokenSource cancellationTokenSource, object[] constructorArguments)
         : base(testMethod, @class, method, testCases, diagnosticMessageSink, messageBus, aggregator, cancellationTokenSource, constructorArguments)
     {
+        this.constructorArguments = constructorArguments;
+        this.diagnosticMessageSink = diagnosticMessageSink;
     }
 
     // This method has been slightly modified from the original implementation to run tests in parallel
@@ -34,6 +39,10 @@ public class ParallelTestMethodRunner : XunitTestMethodRunner
         return summary;
     }
 
-    protected override Task<RunSummary> RunTestCaseAsync(IXunitTestCase testCase)
-        => Task.Run(() => base.RunTestCaseAsync(testCase));
+    protected override async Task<RunSummary> RunTestCaseAsync(IXunitTestCase testCase)
+    {
+        var args = constructorArguments.Select(a => a is TestOutputHelper ? new TestOutputHelper() : a).ToArray();
+
+        return await Task.Run(() => testCase.RunAsync(diagnosticMessageSink, MessageBus, args, new ExceptionAggregator(Aggregator), CancellationTokenSource)).ConfigureAwait(false);
+    }
 }
