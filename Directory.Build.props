@@ -10,7 +10,7 @@
     <AnalysisLevel>latest</AnalysisLevel>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
     <AnalysisMode>AllEnabledByDefault</AnalysisMode>
-    <NoWarn>$(NoWarn);CA1014</NoWarn>
+    <NoWarn>$(NoWarn);CA1014;CA1031;xUnit1026</NoWarn>
 
     <ReportAnalyzer>true</ReportAnalyzer>
 
