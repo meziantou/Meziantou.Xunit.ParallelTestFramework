@@ -41,8 +41,19 @@ public class ParallelTestMethodRunner : XunitTestMethodRunner
 
     protected override async Task<RunSummary> RunTestCaseAsync(IXunitTestCase testCase)
     {
+        // Create a new TestOutputHelper for each test case since they cannot be reused when running in parallel
         var args = constructorArguments.Select(a => a is TestOutputHelper ? new TestOutputHelper() : a).ToArray();
 
-        return await Task.Run(() => testCase.RunAsync(diagnosticMessageSink, MessageBus, args, new ExceptionAggregator(Aggregator), CancellationTokenSource)).ConfigureAwait(false);
+        var action = () => testCase.RunAsync(diagnosticMessageSink, MessageBus, args, new ExceptionAggregator(Aggregator), CancellationTokenSource);
+
+        // Respect MaxParallelThreads by using the MaxConcurrencySyncContext if it exists, mimicking how collections are run
+        // https://github.com/xunit/xunit/blob/2.4.2/src/xunit.execution/Sdk/Frameworks/Runners/XunitTestAssemblyRunner.cs#L169-L176
+        if (SynchronizationContext.Current != null)
+        {
+            var scheduler = TaskScheduler.FromCurrentSynchronizationContext();
+            return await Task.Factory.StartNew(action, CancellationTokenSource.Token, TaskCreationOptions.DenyChildAttach | TaskCreationOptions.HideScheduler, scheduler).Unwrap().ConfigureAwait(false);
+        }
+
+        return await Task.Run(action, CancellationTokenSource.Token).ConfigureAwait(false);
     }
 }
