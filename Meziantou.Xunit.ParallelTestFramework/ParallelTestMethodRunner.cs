@@ -21,6 +21,8 @@ public class ParallelTestMethodRunner : XunitTestMethodRunner
     protected override async Task<RunSummary> RunTestCasesAsync()
     {
         var disableParallelization = TestMethod.Method.GetCustomAttributes(typeof(DisableParallelizationAttribute)).Any()
+            || TestMethod.Method.Type.GetCustomAttributes(typeof(DisableParallelizationAttribute)).Any()
+            || TestMethod.Method.Type.GetCustomAttributes(typeof(CollectionAttribute)).Any()
             || TestMethod.Method.GetCustomAttributes(typeof(MemberDataAttribute)).Any(a => a.GetNamedArgument<bool>(nameof(MemberDataAttribute.DisableDiscoveryEnumeration)));
 
         if (disableParallelization)
