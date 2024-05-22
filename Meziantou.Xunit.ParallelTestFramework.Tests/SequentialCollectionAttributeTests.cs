@@ -3,7 +3,6 @@ using Xunit;
 namespace Meziantou.Xunit.ParallelTestFramework.Tests;
 
 [Collection("Sequential")]
-[DisableParallelization]
 public class SequentialCollectionAttributeTests : IClassFixture<ConcurrencyFixture>
 {
     private readonly ConcurrencyFixture fixture;
