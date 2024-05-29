@@ -19,7 +19,7 @@ public class ParallelTestClassRunner : XunitTestClassRunner
         var disableParallelizationAttribute = TestClass.Class.GetCustomAttributes(typeof(DisableParallelizationAttribute)).Any();
 
         var disableParallelizationOnCustomCollection = TestClass.Class.GetCustomAttributes(typeof(CollectionAttribute)).Any() 
-            && !TestClass.Class.GetCustomAttributes(typeof(EnableCustomCollectionParallelizationAttribute)).Any();
+            && !TestClass.Class.GetCustomAttributes(typeof(EnableParallelizationAttribute)).Any();
 
         var disableParallelization = disableParallelizationAttribute || disableParallelizationOnCustomCollection;
 
