@@ -16,8 +16,12 @@ public class ParallelTestClassRunner : XunitTestClassRunner
     // https://github.com/xunit/xunit/blob/2.4.2/src/xunit.execution/Sdk/Frameworks/Runners/TestClassRunner.cs#L194-L219
     protected override async Task<RunSummary> RunTestMethodsAsync()
     {
-        var disableParallelization = TestClass.Class.GetCustomAttributes(typeof(DisableParallelizationAttribute)).Any()
-            || TestClass.Class.GetCustomAttributes(typeof(CollectionAttribute)).Any();
+        var disableParallelizationAttribute = TestClass.Class.GetCustomAttributes(typeof(DisableParallelizationAttribute)).Any();
+
+        var disableParallelizationOnCustomCollection = TestClass.Class.GetCustomAttributes(typeof(CollectionAttribute)).Any() 
+            && !TestClass.Class.GetCustomAttributes(typeof(EnableParallelizationAttribute)).Any();
+
+        var disableParallelization = disableParallelizationAttribute || disableParallelizationOnCustomCollection;
 
         if (disableParallelization)
             return await base.RunTestMethodsAsync().ConfigureAwait(false);
