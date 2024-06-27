@@ -2,13 +2,18 @@ using Xunit;
 
 namespace Meziantou.Xunit.ParallelTestFramework.Tests;
 
-[Collection("ParallelMultiClass")]
+[CollectionDefinition("ParallelMultiClass")]
 [EnableParallelization]
-public class ParallelCollectionMultiClass1AttributeTests : IClassFixture<ConcurrencyFixture>
+public class ParallelMultiClassCollection : ICollectionFixture<CollectionConcurrencyFixture>
 {
-    private readonly ConcurrencyFixture fixture;
+}
 
-    public ParallelCollectionMultiClass1AttributeTests(ConcurrencyFixture fixture)
+[Collection("ParallelMultiClass")]
+public class ParallelCollectionMultiClass1AttributeTests
+{
+    private readonly CollectionConcurrencyFixture fixture;
+
+    public ParallelCollectionMultiClass1AttributeTests(CollectionConcurrencyFixture fixture)
     {
         this.fixture = fixture;
     }
@@ -27,12 +32,11 @@ public class ParallelCollectionMultiClass1AttributeTests : IClassFixture<Concurr
 }
 
 [Collection("ParallelMultiClass")]
-[EnableParallelization]
-public class ParallelCollectionMultiClass2AttributeTests : IClassFixture<ConcurrencyFixture>
+public class ParallelCollectionMultiClass2AttributeTests
 {
-    private readonly ConcurrencyFixture fixture;
+    private readonly CollectionConcurrencyFixture fixture;
 
-    public ParallelCollectionMultiClass2AttributeTests(ConcurrencyFixture fixture)
+    public ParallelCollectionMultiClass2AttributeTests(CollectionConcurrencyFixture fixture)
     {
         this.fixture = fixture;
     }

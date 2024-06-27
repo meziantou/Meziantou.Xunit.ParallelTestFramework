@@ -83,3 +83,43 @@ public class SequentialTests
 ````
 
 The code is greatly inspired by the sample from [Travis Mortimer](https://github.com/tmort93): <https://github.com/xunit/xunit/issues/1986#issuecomment-831322722>
+
+
+## Parallel in a collection
+
+Using the `EnableParallelizationAttribute` on an `ICollectionFixture<T>` enables the parallel execution between classes in a collection.
+If you want to enable parallisation inside a class you still need to add the `EnableParallelizationAttribute` on the test class aswell.
+
+```c#
+[CollectionDefinition("MyFixture Collection")]
+[EnableParallelization] // This enables the parallel execution of classes in a collection 
+public class MyFixtureCollection : ICollectionFixture<MyFixture>
+{
+}
+
+[Collection("MyFixture Collection")]
+public class MyFirstTestClass
+{
+    private readonly MyFixture fixture;
+
+    public ParallelCollectionMultiClass1AttributeTests(MyFixture fixture)
+    {
+        this.fixture = fixture;
+    }
+
+    //...
+}
+
+[Collection("MyFixture Collection")]
+public class MySecondTestClass
+{
+    private readonly MyFixture fixture;
+
+    public ParallelCollectionMultiClass1AttributeTests(MyFixture fixture)
+    {
+        this.fixture = fixture;
+    }
+
+    //...
+}
+```
