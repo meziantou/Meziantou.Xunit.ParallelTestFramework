@@ -12,4 +12,25 @@ public class ParallelTestCollectionRunner : XunitTestCollectionRunner
 
     protected override Task<RunSummary> RunTestClassAsync(ITestClass testClass, IReflectionTypeInfo @class, IEnumerable<IXunitTestCase> testCases)
         => new ParallelTestClassRunner(testClass, @class, testCases, DiagnosticMessageSink, MessageBus, TestCaseOrderer, new ExceptionAggregator(Aggregator), CancellationTokenSource, CollectionFixtureMappings).RunAsync();
+
+
+    protected override async Task<RunSummary> RunTestClassesAsync()
+    {
+        var summary = new RunSummary();
+
+        var classTasks = TestCases.GroupBy(tc => tc.TestMethod.TestClass, TestClassComparer.Instance)
+            .Select(tc => RunTestClassAsync(tc.Key, (IReflectionTypeInfo)tc.Key.Class, tc));
+
+        var classSummaries = await Task.WhenAll(classTasks)
+#if !NETSTANDARD
+            .WaitAsync(CancellationTokenSource.Token)
+#endif
+            .ConfigureAwait(false);
+        foreach (var classSummary in classSummaries)
+        {
+            summary.Aggregate(classSummary);
+        }
+
+        return summary;
+    }
 }
