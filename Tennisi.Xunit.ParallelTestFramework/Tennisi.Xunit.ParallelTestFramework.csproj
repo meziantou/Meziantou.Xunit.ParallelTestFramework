@@ -1,0 +1,38 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net7.0;net7.0-windows;netstandard2.0</TargetFrameworks>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Description>Run xUnit test cases in parallel</Description>
+    <IsPackable>True</IsPackable>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <RootNamespace>Tennisi.Xunit</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <AssemblyAttribute Include="Xunit.TestFramework">
+      <_Parameter1>Tennisi.Xunit.DiagnosticTestFramework</_Parameter1>
+      <_Parameter2>Tennisi.Xunit.ParallelTestFramework</_Parameter2>
+    </AssemblyAttribute>
+  </ItemGroup>
+
+  <PropertyGroup>
+    <NoWarn>$(NoWarn);CA2007;CA1062</NoWarn>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="MinVer" Version="4.*" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="xunit.extensibility.execution" Version="2.4.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="$(MSBuildProjectDirectory)/../README.md" Pack="true" PackagePath="" />
+    <None Include="build/**/*.props" Pack="true" PackagePath="build" />
+    <None Include="buildMultiTargeting/**/*.props" Pack="true" PackagePath="buildMultiTargeting" />
+  </ItemGroup>
+
+</Project>

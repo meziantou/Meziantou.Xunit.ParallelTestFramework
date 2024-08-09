@@ -1,0 +1,72 @@
+name: Build, Test, Version, and Publish
+
+on:
+  push:
+    branches:
+      - main
+      - '**'
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '7.0.x'
+
+      - name: Determine versioning
+        id: versioning
+        run: |
+          # Determine if we are on the main branch
+          if [ "${{ github.ref }}" == "refs/heads/main" ]; then
+            # Try to get the latest tag
+            TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+          
+            if [ -z "$TAG" ]; then
+              # No tag exists, apply a default version
+              echo "VERSION=1.0.0" >> $GITHUB_ENV
+            else
+              # Use the tag as the version
+              echo "VERSION=${TAG}" >> $GITHUB_ENV
+            fi
+          else
+            # Handle non-main branches
+            TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "0.0.0")
+            COMMITS_SINCE_TAG=$(git rev-list ${TAG}..HEAD --count || echo "0")
+            echo "VERSION=${TAG}-alpha.${COMMITS_SINCE_TAG}" >> $GITHUB_ENV
+          fi
+        shell: bash
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build the project
+        run: dotnet build --configuration Release /p:Version=${{ env.VERSION }} /p:MinVerMinimumMajorMinor=3.0
+
+      - name: Run tests
+        run: dotnet test --configuration Release
+
+      - name: Pack the project
+        run: dotnet pack --configuration Release --output ./nuget /p:PackageVersion=${{ env.VERSION }}
+
+      - name: Publish to NuGet
+        if: github.ref == 'refs/heads/main'
+        run: dotnet nuget push ./nuget/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
+        env:
+          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+
+      - name: Upload published artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: published-files
+          path: ./nuget
