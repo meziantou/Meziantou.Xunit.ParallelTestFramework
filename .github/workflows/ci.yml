@@ -1,33 +1,51 @@
-name: publish
+name: CI
+
 on:
   push:
     branches:
-      - 'main'
+      - main
+      - feature/*
   pull_request:
     branches:
-      - '*'
-
-env:
-  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
-  DOTNET_NOLOGO: true
-  NuGetDirectory: ${{ github.workspace}}/nuget
-
-defaults:
-  run:
-    shell: pwsh
+      - main
+      - feature/*
 
 jobs:
-  create_nuget:
-    runs-on: ubuntu-20.04
+  build:
+    runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v1
-    - run: dotnet test Meziantou.Xunit.ParallelTestFramework.sln --configuration Release
-    - run: dotnet pack Meziantou.Xunit.ParallelTestFramework.sln --configuration Release --output ${{ env.NuGetDirectory }} --no-build /bl
-    - uses: actions/upload-artifact@v2
-      with:
-        name: nuget
-        if-no-files-found: error
-        retention-days: 3
-        path: ${{ env.NuGetDirectory }}/**/*
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '7.x'
+
+      - name: Initialize .NET tool manifest
+        run: |
+          dotnet new tool-manifest || true
+
+      - name: Install minver-cli locally
+        run: dotnet tool install minver-cli --version 5.0.0
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build --no-restore
+
+      - name: Run tests
+        run: dotnet test --no-build --verbosity normal
+
+      - name: Get MinVer version
+        id: get_version
+        run: |
+          MINVER_VERSION=$(dotnet minver)
+          echo "MINVER_VERSION=${MINVER_VERSION}" >> $GITHUB_ENV
+
+      - name: Pack and Push (if on main)
+        if: github.ref == 'refs/heads/main'
+        run: |
+          dotnet pack -c Release /p:Version=${{ env.MINVER_VERSION }}
+          dotnet nuget push **/*.nupkg --source <your-nuget-source>

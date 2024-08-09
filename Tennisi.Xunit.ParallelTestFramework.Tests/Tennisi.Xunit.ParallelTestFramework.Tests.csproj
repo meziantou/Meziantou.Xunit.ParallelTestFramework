@@ -1,0 +1,39 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <ParallelizeTestCollections>true</ParallelizeTestCollections>
+  </PropertyGroup>
+  
+  <ImportGroup>
+    <Import Project="../Tennisi.Xunit.ParallelTestFramework/build/Tennisi.Xunit.ParallelTestFramework.props" />
+  </ImportGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Tennisi.Xunit.ParallelTestFramework\Tennisi.Xunit.ParallelTestFramework.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.3.2" />
+    <PackageReference Include="xunit" Version="2.4.2" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.5">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="ParallelCollectionMultiClass1AttributeTests.cs" />
+    <None Include="ParallelCollectionMultiClass1AttributeTests.cs" />
+    <Compile Remove="ParallelCollectionMultiClass2AttributeTests.cs" />
+    <None Include="ParallelCollectionMultiClass2AttributeTests.cs" />
+    <Compile Remove="ParallelCollectionTests.cs" />
+    <None Include="ParallelCollectionTests.cs" />
+  </ItemGroup>
+</Project>

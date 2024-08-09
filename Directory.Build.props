@@ -10,7 +10,7 @@
     <AnalysisLevel>latest</AnalysisLevel>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
     <AnalysisMode>AllEnabledByDefault</AnalysisMode>
-    <NoWarn>$(NoWarn);CA1014;CA1031;xUnit1026</NoWarn>
+    <NoWarn>$(NoWarn);CA1014;CA1031;xUnit1026;CA2007;CA1822;CA1062</NoWarn>
 
     <ReportAnalyzer>true</ReportAnalyzer>
 
@@ -20,26 +20,18 @@
 
   <!-- Package attributes -->
   <PropertyGroup>
-    <Authors>Meziantou</Authors>
-    <Company>Meziantou</Company>
-    <PackageProjectUrl>https://github.com/meziantou/Meziantou.Xunit.ParallelTestFramework</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/meziantou/Meziantou.Xunit.ParallelTestFramework.git</RepositoryUrl>
+    <Authors>Tennisi</Authors>
+    <Company>Tennisi</Company>
+    <PackageProjectUrl>https://github.com/tennisi/Tennisi.Xunit.ParallelTestFramework</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/tennisi/Tennisi.Xunit.ParallelTestFramework.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
 
   <!-- disable the nullable warnings when compiling for target that haven't annotation -->
   <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard2.0' OR '$(TargetFramework)' == 'net45' OR '$(TargetFramework)' == 'net461' OR '$(TargetFramework)' == 'netcoreapp2.1'">
-    <NoWarn>$(NoWarn);8600;8601;8602;8603;8604;8619;8767</NoWarn>
+    <NoWarn>$(NoWarn);8600;8601;8602;8603;8604;8619;8767;</NoWarn>
   </PropertyGroup>
-
-  <!-- Analyzers -->
-  <ItemGroup>  
-    <PackageReference Include="Meziantou.Analyzer" Version="2.0.162">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
-    </PackageReference>
- </ItemGroup>
 
   <!-- SourceLink and Reproducible Builds: https://www.meziantou.net/2018/07/09/how-to-debug-nuget-packages-using-sourcelink -->
   <ItemGroup>
