@@ -1,0 +1,8 @@
+﻿<Project>
+  <ItemGroup>
+    <AssemblyAttribute Include="Xunit.TestFramework">
+      <_Parameter1>Tennisi.Xunit.DiagnosticTestFramework</_Parameter1>
+      <_Parameter2>Tennisi.Xunit.ParallelTestFramework</_Parameter2>
+    </AssemblyAttribute>
+  </ItemGroup>
+</Project>
