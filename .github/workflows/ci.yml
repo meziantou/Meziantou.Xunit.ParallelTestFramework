@@ -5,6 +5,8 @@ on:
     branches:
       - main
       - feature/*
+    tags:
+      - '*'
   pull_request:
     branches:
       - main
@@ -44,8 +46,24 @@ jobs:
           MINVER_VERSION=$(dotnet minver)
           echo "MINVER_VERSION=${MINVER_VERSION}" >> $GITHUB_ENV
 
-      - name: Pack and Push (if on main)
-        if: github.ref == 'refs/heads/main'
+      - name: Get latest tag
+        id: get_tag
         run: |
-          dotnet pack -c Release /p:Version=${{ env.MINVER_VERSION }}
-          dotnet nuget push **/*.nupkg --source <your-nuget-source>
+          TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+          echo "TAG=${TAG}" >> $GITHUB_ENV
+
+      - name: Determine version
+        id: determine_version
+        run: |
+          if [ "${GITHUB_REF}" == "refs/heads/main" ]; then
+            VERSION=${{ env.TAG }}
+          else
+            VERSION=${{ env.MINVER_VERSION }}
+          fi
+          echo "VERSION=${VERSION}" >> $GITHUB_ENV
+
+      - name: Pack and Push
+        if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/')
+        run: |
+          dotnet pack -c Release /p:Version=${{ env.VERSION }}
+          dotnet nuget push **/*.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NUGET_API_KEY }}

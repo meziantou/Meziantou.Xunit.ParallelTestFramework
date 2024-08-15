@@ -1,4 +1,4 @@
-Tennisi,  By default, xUnit runs all test cases in a test class synchronously.
+Tennisi, By default, xUnit runs all test cases in a test class synchronously.
 This package extends the default test framework to execute tests in parallel.
 
 ```shell
