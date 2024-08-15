@@ -11,7 +11,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		global.json = global.json
 		README.md = README.md
 		.github\workflows\ci.yml = .github\workflows\ci.yml
-		Tennisi.Xunit.ParallelTestFramework\xunit.runner.json = Tennisi.Xunit.ParallelTestFramework\xunit.runner.json
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tennisi.Xunit.ParallelTestFramework.Tests", "Tennisi.Xunit.ParallelTestFramework.Tests\Tennisi.Xunit.ParallelTestFramework.Tests.csproj", "{25DEF5B0-7B2E-4CA7-A145-CAB9F1B68D53}"

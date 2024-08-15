@@ -9,7 +9,7 @@ public sealed class ParallelTestMethodRunner : XunitTestMethodRunner
     private readonly IMessageSink _diagnosticMessageSink;
     private readonly object[] _constructorArguments;
 
-    private static readonly TimeSpan TimeLimit = TimeSpan.FromSeconds(90);
+    private static readonly TimeSpan TimeLimit = TimeSpan.FromSeconds(120);
 
     public ParallelTestMethodRunner(ITestMethod testMethod,
         IReflectionTypeInfo @class,
@@ -79,15 +79,13 @@ public sealed class ParallelTestMethodRunner : XunitTestMethodRunner
 #if DEBUG
             _diagnosticMessageSink.OnMessage(new DiagnosticMessage($"STARTED: {testDetails}"));
 #endif
-            var task = testCase.RunAsync(_diagnosticMessageSink, MessageBus, args, new ExceptionAggregator(Aggregator),
-                CancellationTokenSource);
-            
             using var timer = new Timer(_ => _diagnosticMessageSink.OnMessage(new DiagnosticMessage($"WARNING: {testDetails} has been running for more than {Math.Round(TimeLimit.TotalMinutes, 2)} minutes")),
                 null,
                 TimeLimit,
                 Timeout.InfiniteTimeSpan);
 
-            var result = await task;
+            var result = await testCase.RunAsync(_diagnosticMessageSink, MessageBus, args, new ExceptionAggregator(Aggregator),
+                CancellationTokenSource);
 
 #if DEBUG
             var status = result.Failed > 0 ? "FAILURE" : result.Skipped > 0 ? "SKIPPED" : "SUCCESS";

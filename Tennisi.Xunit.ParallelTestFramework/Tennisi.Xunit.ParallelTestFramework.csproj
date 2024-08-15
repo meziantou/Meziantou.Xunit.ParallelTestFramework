@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net7.0;net7.0-windows</TargetFrameworks>
+    <TargetFrameworks>net7.0;net7.0-windows;netstandard2.0</TargetFrameworks>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <Description>Run xUnit test cases in parallel</Description>
@@ -18,10 +18,6 @@
     <None Include="$(MSBuildProjectDirectory)/../README.md" Pack="true" PackagePath="" />
     <None Include="build/**/*.props" Pack="true" PackagePath="build" />
     <None Include="buildMultiTargeting/**/*.props" Pack="true" PackagePath="buildMultiTargeting" />
-
-    <None Include="xunit.runner.json" Pack="true" PackagePath="contentFiles\any\any;content">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
-
+  
 </Project>
