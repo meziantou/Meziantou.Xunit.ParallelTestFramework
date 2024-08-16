@@ -14,6 +14,7 @@ public class ThreadTest
     [Fact]
     public async Task Test1()
     {
+        _testOutputHelper.WriteLine("Test1");
         var tr = new Thread(async () =>
         {
             _testOutputHelper.WriteLine("Test");
