@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <ParallelizeTestCollections>true</ParallelizeTestCollections>
+    <FullTestParallelization>true</FullTestParallelization>
   </PropertyGroup>
   
   <ImportGroup>
@@ -35,5 +35,8 @@
     <None Include="ParallelCollectionMultiClass2AttributeTests.cs" />
     <Compile Remove="ParallelCollectionTests.cs" />
     <None Include="ParallelCollectionTests.cs" />
+    <None Update="xunit.runner.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 </Project>

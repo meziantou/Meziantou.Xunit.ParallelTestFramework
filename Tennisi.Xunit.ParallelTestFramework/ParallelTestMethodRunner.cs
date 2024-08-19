@@ -1,6 +1,4 @@
-﻿using System.Security.Cryptography;
-using System.Text;
-using Xunit;
+﻿using Xunit;
 using Xunit.Abstractions;
 using Xunit.Sdk;
 
@@ -59,15 +57,9 @@ public sealed class ParallelTestMethodRunner : XunitTestMethodRunner
     protected override async Task<RunSummary> RunTestCaseAsync(IXunitTestCase testCase)
     {
         var args = _constructorArguments.Select(a => a is TestOutputHelper ? new TestOutputHelper() : a).ToArray();
-        if (args.Length >= 1)
-        {
-            var lastArg = args[args.Length - 1];
-            if (lastArg is null or string)
-            {
-                args[args.Length - 1] =
-                    ParallelTag.ToPositiveInt64Hash(testCase.TestMethod, testCase.TestMethodArguments).ToString();
-            }
-        }
+        var parallelTag = ParallelTag.FromTestCase(_constructorArguments, testCase, testCase.TestMethodArguments);
+        if (parallelTag != null)
+            ParallelTag.Inject(ref parallelTag, ref args);
 
         var action = () => RunDiagnosticTestCaseAsync(testCase, args);
         if (SynchronizationContext.Current == null)

@@ -1,33 +1,67 @@
-﻿using System.Security.Cryptography;
-using System.Text;
-using Xunit.Abstractions;
+﻿using Xunit.Sdk;
 
 namespace Tennisi.Xunit;
 
-public static class ParallelTag
+public readonly struct ParallelTag : IEquatable<ParallelTag>
 {
-    public static long ToPositiveInt64Hash(ITestMethod method, object[] args)
+    private readonly int _index = -1;
+
+    public static ParallelTag? FromTestCase(object[]? constructorArguments, IXunitTestCase testCase, object[] args)
     {
-        var code = method.TestClass.Class.Name + "." + method.Method.Name;
-
-        if (args != null && args.Length > 0)
+        if (constructorArguments == null)
+            return null;
+        for (var i = 0; i <= constructorArguments.Length - 1; i++)
         {
-            foreach (var arg in args)
-            {
-                code += "." + (arg?.ToString() ?? "null");
-            }
+            var p = constructorArguments[i];
+            if (p is not ParallelTag) continue;
+            var result = new ParallelTag(testCase.UniqueID, i);
+            return result;
         }
-
-        return ToPositiveInt64Hash(code);
+        return null;
     }
 
-    public static long ToPositiveInt64Hash(string input)
+    public static void Inject(ref ParallelTag? tag, ref object[] args)
     {
-        using (var sha256 = SHA256.Create())
-        {
-            byte[] hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(input));
-            long hashValue = BitConverter.ToInt64(hashBytes, 0);
-            return hashValue & 0x7FFFFFFFFFFFFFFF;
-        }
+        if (tag == null)
+            throw new InvalidOperationException(nameof(ParallelTag));
+        args[tag.Value._index] = tag;
+    }
+
+    private string Value { get; } = "";
+
+    private ParallelTag(string value, int indexInConstrcutor)
+    {
+        Value = value;
+        _index = indexInConstrcutor;
+    }
+
+    public override string ToString()
+    {
+        return Value;
+    }
+
+    public bool Equals(ParallelTag other)
+    {
+        return Value == other.Value;
+    }
+
+    public override bool Equals(object obj)
+    {
+        return obj is ParallelTag other && Equals(other);
+    }
+
+    public override int GetHashCode()
+    {
+        return Value.GetHashCode();
+    }
+
+    public static bool operator ==(ParallelTag left, ParallelTag right)
+    {
+        return left.Equals(right);
+    }
+
+    public static bool operator !=(ParallelTag left, ParallelTag right)
+    {
+        return !(left == right);
     }
 }

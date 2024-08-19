@@ -1,6 +1,6 @@
 ﻿<Project>
-    <ItemGroup Condition="'$(ParallelizeTestCollections)' == 'true'">
-        <AssemblyAttribute Include="Tennisi.Xunit.ParallelizeTestCollectionsAttribute">
+    <ItemGroup Condition="'$(FullTestParallelization)' == 'true'">
+        <AssemblyAttribute Include="Tennisi.Xunit.FullTestParallelizationAttribute">
         </AssemblyAttribute>
     </ItemGroup>
 </Project>

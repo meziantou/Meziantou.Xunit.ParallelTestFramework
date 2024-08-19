@@ -7,9 +7,6 @@ namespace Tennisi.Xunit;
 
 public class ParallelTestFramework : XunitTestFramework
 {
-    public ITestFrameworkExecutor CreateExecutorShim(AssemblyName assemblyName)
-        => CreateExecutor(assemblyName);
-
     [SuppressMessage("ReSharper", "ConditionalAccessQualifierIsNonNullableAccordingToAPIContract", Justification = "By Author")]
     protected ParallelTestFramework(IMessageSink messageSink)
         : base(messageSink)
@@ -20,5 +17,12 @@ public class ParallelTestFramework : XunitTestFramework
     }
 
     protected override ITestFrameworkExecutor CreateExecutor(AssemblyName assemblyName)
-        => new ParallelTestFrameworkExecutor(assemblyName, SourceInformationProvider, DiagnosticMessageSink);
+    {
+        return new ParallelTestFrameworkExecutor(assemblyName, SourceInformationProvider, DiagnosticMessageSink);
+    }
+
+    protected override ITestFrameworkDiscoverer CreateDiscoverer(IAssemblyInfo assemblyInfo)
+    {
+        return new ParallelTestFrameworkDiscoverer(assemblyInfo, SourceInformationProvider, DiagnosticMessageSink);
+    }
 }
