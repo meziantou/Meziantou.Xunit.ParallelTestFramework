@@ -16,9 +16,11 @@ public class XTest
     
     public XTest(ITestOutputHelper testOutputHelper, string tag = "")
     {
-        _counter = Interlocked.Increment(ref _counter);
         _tag = tag;
+        
+        _counter = Interlocked.Increment(ref _counter);
         _testOutput = testOutputHelper;
+        _testOutput.WriteLine($"construct: {_counter}:{_tag}");
     }
 
     [Theory]
@@ -35,7 +37,7 @@ public class XTest
         var counter = _counter;
         if (_tagControl.TryAdd(who, _tag) == false)
         {
-            //throw new InvalidOperationException("Ne poluchitsa");
+           //throw new InvalidOperationException("Ne poluchitsa");
         }
         _testOutput.WriteLine($"I'm started when {counter} tests are allready created, My name is {who}, my tag {_tag}");
         await Task.Delay(1000);
