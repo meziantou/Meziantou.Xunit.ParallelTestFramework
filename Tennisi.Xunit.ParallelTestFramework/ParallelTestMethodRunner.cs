@@ -27,7 +27,7 @@ public sealed class ParallelTestMethodRunner : XunitTestMethodRunner
         _constructorArguments = constructorArguments;
     }
 
-    protected override async Task<RunSummary> RunTestCasesAsync()
+    protected override async Task<RunSummary?> RunTestCasesAsync()
     {
         var disableParallelization =
             TestMethod.TestClass.Class.GetCustomAttributes(typeof(DisableParallelizationAttribute)).Any()
@@ -37,13 +37,27 @@ public sealed class ParallelTestMethodRunner : XunitTestMethodRunner
                 a.GetNamedArgument<bool>(nameof(MemberDataAttribute.DisableDiscoveryEnumeration)));
         
         var summary = new RunSummary();
-        foreach (var testCase in TestCases)
+        if (ParallelSettings.GetSetting(TestMethod.TestClass.Class.Assembly.Name, "xunit.discovery.PreEnumerateTheories") == true && !disableParallelization)
         {
-            var runSummary = summary;
-            runSummary.Aggregate(await RunTestCaseAsync2(testCase, disableParallelization));
-            if (CancellationTokenSource.IsCancellationRequested)
-                break;
+            var caseTasks = TestCases.Select(x => RunTestCaseAsync2(x, disableParallelization));
+            var caseSummaries = await Task.WhenAll(caseTasks).ConfigureAwait(false);
+            foreach (var caseSummary in caseSummaries)
+            {
+                summary.Aggregate(caseSummary);
+            }
         }
+        else
+        {
+            foreach (var xunitTestCase in TestCases)
+            {
+                var testCase = (XunitTestCase)xunitTestCase;
+                summary.Aggregate(await RunTestCaseAsync2(testCase, disableParallelization));
+                if (CancellationTokenSource.IsCancellationRequested)
+                    break;
+            }
+            return summary;
+        }
+
         return summary;
     }
     

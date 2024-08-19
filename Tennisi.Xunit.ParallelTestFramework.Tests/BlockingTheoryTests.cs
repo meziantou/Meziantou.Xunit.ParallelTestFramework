@@ -19,6 +19,6 @@ public class BlockingTheoryTests : IClassFixture<ConcurrencyFixture>
     [SuppressMessage("Usage", "xUnit1026:Theory methods should use all of their parameters", Justification = "By Author")]
     public async Task Theory(int value)
     {
-        Assert.Equal(1, await _fixture.CheckConcurrencyAsync());
+        Assert.Equal(2, await _fixture.CheckConcurrencyAsync());
     }
 }

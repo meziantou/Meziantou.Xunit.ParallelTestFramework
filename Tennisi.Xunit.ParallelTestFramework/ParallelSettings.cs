@@ -6,30 +6,49 @@ namespace Tennisi.Xunit;
 
 internal static class ParallelSettings
 {
-    private static readonly ConcurrentDictionary<string, bool> TestCollectionsCache = new();
+    private class TestAsm
+    {
+        public TestAsm(bool force, ITestFrameworkOptions opts)
+        {
+            Opts = opts;
+            Force = force;
+        }
 
-    public static void RefineParallelSetting(AssemblyName assemblyName, ITestFrameworkOptions opts, string setting, bool value)
+        internal bool Force {get; set;}
+        internal ITestFrameworkOptions Opts { get; set; }
+    }
+    private static readonly ConcurrentDictionary<string, TestAsm> TestCollectionsCache = new();
+
+    internal static void RefineParallelSetting(AssemblyName assemblyName, ITestFrameworkOptions opts, string setting, bool value)
     {
         RefineParallelSetting(assemblyName.FullName, opts, setting, value);
     }
     
-    public static void RefineParallelSetting(string assemblyName, ITestFrameworkOptions opts, string setting, bool value)
+    internal static void RefineParallelSetting(string assemblyName, ITestFrameworkOptions opts, string setting, bool value)
     {
-        if (ShouldForceParallelize(assemblyName))
+        if (ShouldForceParallelize(assemblyName, opts).Force)
         {
             opts.SetValue(setting, value);
         }
     }
+
+    public static bool GetSetting(string assemblyName, string setting)
+    {
+        var res = TestCollectionsCache.TryGetValue(assemblyName, out TestAsm? asm);
+        if (!res) throw new InvalidOperationException();
+        var val = asm != null && asm.Opts.GetValue<bool>(setting);
+        return val;
+    }
     
-    private static bool ShouldForceParallelize(string assemblyName)
+    private static TestAsm ShouldForceParallelize(string assemblyName, ITestFrameworkOptions opts)
     {
         return TestCollectionsCache.GetOrAdd(assemblyName , name =>
         {
             var assembly = Assembly.Load(new AssemblyName(name));
             var attributeType = typeof(FullTestParallelizationAttribute);
             var attributes = assembly.GetCustomAttributes(attributeType, false);
-            var result = attributes.Any();
-            return result;
+            var result = attributes.Length != 0;
+            return new TestAsm(force: result, opts);
         });
     }
 }

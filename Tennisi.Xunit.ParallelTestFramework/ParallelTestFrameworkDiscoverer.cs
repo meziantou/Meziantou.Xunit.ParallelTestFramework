@@ -5,7 +5,7 @@ namespace Tennisi.Xunit;
 
 public class ParallelTestFrameworkDiscoverer: XunitTestFrameworkDiscoverer
 {
-    private IAssemblyInfo _assemblyInfo;
+    private readonly IAssemblyInfo _assemblyInfo;
     public ParallelTestFrameworkDiscoverer(IAssemblyInfo assemblyInfo, ISourceInformationProvider sourceProvider, IMessageSink diagnosticMessageSink, IXunitTestCollectionFactory collectionFactory = null) : base(assemblyInfo, sourceProvider, diagnosticMessageSink, collectionFactory)
     {
         _assemblyInfo = assemblyInfo;
