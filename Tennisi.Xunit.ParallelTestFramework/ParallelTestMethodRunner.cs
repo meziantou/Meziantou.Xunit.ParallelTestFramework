@@ -1,4 +1,6 @@
-﻿using Xunit;
+﻿using System.Security.Cryptography;
+using System.Text;
+using Xunit;
 using Xunit.Abstractions;
 using Xunit.Sdk;
 
@@ -46,7 +48,7 @@ public sealed class ParallelTestMethodRunner : XunitTestMethodRunner
         }
         return summary;
     }
-
+    
     private async Task<RunSummary> RunTestCaseAsync2(IXunitTestCase testCase, bool disableParallelization)
     {
         if (disableParallelization)
@@ -56,7 +58,17 @@ public sealed class ParallelTestMethodRunner : XunitTestMethodRunner
 
     protected override async Task<RunSummary> RunTestCaseAsync(IXunitTestCase testCase)
     {
-        var args   = _constructorArguments.Select(a => a is TestOutputHelper ? new TestOutputHelper() : a).ToArray();
+        var args = _constructorArguments.Select(a => a is TestOutputHelper ? new TestOutputHelper() : a).ToArray();
+        if (args.Length >= 1)
+        {
+            var lastArg = args[args.Length - 1];
+            if (lastArg is null or string)
+            {
+                args[args.Length - 1] =
+                    ParallelTag.ToPositiveInt64Hash(testCase.TestMethod, testCase.TestMethodArguments).ToString();
+            }
+        }
+
         var action = () => RunDiagnosticTestCaseAsync(testCase, args);
         if (SynchronizationContext.Current == null)
             return await Task.Run(action, CancellationTokenSource.Token).ConfigureAwait(false);
@@ -66,7 +78,7 @@ public sealed class ParallelTestMethodRunner : XunitTestMethodRunner
                                    TaskCreationOptions.DenyChildAttach | TaskCreationOptions.HideScheduler, scheduler).Unwrap()
                          .ConfigureAwait(false);
     }
-
+    
     private async Task<RunSummary> RunDiagnosticTestCaseAsync(IXunitTestCase testCase, object[] args)
     {
         var parameters = testCase.TestMethodArguments != null

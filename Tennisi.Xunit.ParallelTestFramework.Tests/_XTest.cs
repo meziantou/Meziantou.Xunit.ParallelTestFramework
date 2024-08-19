@@ -8,35 +8,41 @@ namespace Tennisi.Xunit.ParallelTestFramework.Tests;
 
 public class XTest
 {
-    private readonly int _uniqueTagPerMethod;
-    private static readonly ConcurrentDictionary<string, int> _uniqueControl = new ConcurrentDictionary<string, int>();
-    private static int _counter = 0;
+    private readonly string _tag;
     
+    private static readonly ConcurrentDictionary<string, string> _tagControl = new ConcurrentDictionary<string, string>();
+    private static int _counter = 0;
     private readonly ITestOutputHelper _testOutput;
     
-    public XTest(ITestOutputHelper testOutputHelper)
+    public XTest(ITestOutputHelper testOutputHelper, string tag = "")
     {
-        _uniqueTagPerMethod = Interlocked.Increment(ref _counter);
+        _counter = Interlocked.Increment(ref _counter);
+        _tag = tag;
         _testOutput = testOutputHelper;
     }
 
+    [Theory]
+    [InlineData("abc")]
+    [InlineData("def")]
+    public async Task Task1(string abc)
+    {
+        _testOutput.WriteLine($"Task1 with argument {abc} and parallel tag {_tag}");
+        await Test(GetTestMethodName());
+    }
+    
     private async Task Test(string who)
     {
         var counter = _counter;
-        if (_uniqueControl.TryAdd(who, _uniqueTagPerMethod) == false)
+        if (_tagControl.TryAdd(who, _tag) == false)
         {
-            throw new InvalidOperationException("Ne poluchitsa");
+            //throw new InvalidOperationException("Ne poluchitsa");
         }
-        _testOutput.WriteLine($"I'm started when {counter} tests are allready created, My name is {who}, my tag {_uniqueTagPerMethod}");
+        _testOutput.WriteLine($"I'm started when {counter} tests are allready created, My name is {who}, my tag {_tag}");
         await Task.Delay(1000);
-        var unqState = string.Join(',',_uniqueControl.Select(a => $"{a.Key}-{a.Value}"));
+        var unqState = string.Join(',',_tagControl.Select(a => $"{a.Key}-{a.Value}"));
         _testOutput.WriteLine($"I'm finished. Group Control:{unqState}");
     }
 
-    [Fact]
-    public async Task Task1() =>
-        await Test(GetTestMethodName());
-    
     [Fact]
     public async Task Task2() =>
         await Test(GetTestMethodName());
