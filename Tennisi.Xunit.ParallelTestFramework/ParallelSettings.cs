@@ -34,6 +34,7 @@ internal static class ParallelSettings
 
     public static bool GetSetting(string assemblyName, string setting)
     {
+        assemblyName = AssemblyInfoExtractor.ExtractNameAndVersion(assemblyName);
         var res = TestCollectionsCache.TryGetValue(assemblyName, out TestAsm? asm);
         if (!res) throw new InvalidOperationException();
         var val = asm != null && asm.Opts.GetValue<bool>(setting);
@@ -42,6 +43,7 @@ internal static class ParallelSettings
     
     private static TestAsm ShouldForceParallelize(string assemblyName, ITestFrameworkOptions opts)
     {
+        assemblyName = AssemblyInfoExtractor.ExtractNameAndVersion(assemblyName);
         return TestCollectionsCache.GetOrAdd(assemblyName , name =>
         {
             var assembly = Assembly.Load(new AssemblyName(name));
@@ -50,5 +52,17 @@ internal static class ParallelSettings
             var result = attributes.Length != 0;
             return new TestAsm(force: result, opts);
         });
+    }
+    
+    private static class AssemblyInfoExtractor
+    {
+        internal static string ExtractNameAndVersion(string assemblyName)
+        {
+            var parts = assemblyName.Split(',');
+
+            var name = parts.FirstOrDefault(p => !p.Contains('='))?.Trim();
+            var version = parts.FirstOrDefault(p => p.Trim().StartsWith("Version="))?.Split('=')[1].Trim();
+            return $"{name}, Version={version}";
+        }
     }
 }
