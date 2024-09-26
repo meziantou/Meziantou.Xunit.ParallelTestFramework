@@ -53,16 +53,4 @@ internal static class ParallelSettings
             return new TestAsm(force: result, opts);
         });
     }
-    
-    private static class AssemblyInfoExtractor
-    {
-        internal static string ExtractNameAndVersion(string assemblyName)
-        {
-            var parts = assemblyName.Split(',');
-
-            var name = parts.FirstOrDefault(p => !p.Contains('='))?.Trim();
-            var version = parts.FirstOrDefault(p => p.Trim().StartsWith("Version="))?.Split('=')[1].Trim();
-            return $"{name}, Version={version}";
-        }
-    }
 }
