@@ -83,7 +83,7 @@ public sealed class ParallelTestClassRunner : XunitTestClassRunner
                 var parameters = ctor.GetParameters();
 
                 object[] constructorArguments = new object[parameters.Length];
-                for (int idx = 0; idx < parameters.Length; ++idx)
+                for (var idx = 0; idx < parameters.Length; ++idx)
                 {
                     var parameter = parameters[idx];
                     object argumentValue;

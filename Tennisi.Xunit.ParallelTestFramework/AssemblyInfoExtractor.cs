@@ -7,8 +7,8 @@ internal static class AssemblyInfoExtractor
     public static string ExtractNameAndVersion(string input)
     {
         var parts = input.Split(Separator, StringSplitOptions.RemoveEmptyEntries);
-        string namePart = string.Empty;
-        string versionPart = string.Empty;
+        var namePart = string.Empty;
+        var versionPart = string.Empty;
 
         foreach (var part in parts)
         {

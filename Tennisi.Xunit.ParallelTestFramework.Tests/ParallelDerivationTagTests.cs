@@ -11,36 +11,57 @@ public class ParallelDerivationTagTests
 
     [Fact]
     public void ItShouldGenerateTags()
-        => Iterate(Attempts, BaseCount, ParallelTag.FromValue);
-        
+        => Iterate(Attempts, BaseCount, x => ParallelTag.FromValue(x));
+
     [Fact]
     public void ItShouldGenerateDeriviedTags()
         => Iterate(Attempts, BaseCount, x => ParallelTag.FromValue(x).Next());
-    
+
     [Fact]
     public void ItShouldGenerateTagsAsLong()
         => Iterate(Attempts, BaseCount, x => ParallelTag.FromValue(x).AsLong());
-    
+
     [Fact]
     public void ItShouldGenerateDerivedTagsAsLong()
         => Iterate(Attempts, BaseCount, x => ParallelTag.FromValue(x).Next().AsLong());
-    
+
     [Fact]
     public void ItShouldGenerateTagsAsGuid()
         => Iterate(Attempts, BaseCount, x => ParallelTag.FromValue(x).AsGuid());
-    
+
     [Fact]
     public void ItShouldGenerateDeriveTagsAsGuid()
         => Iterate(Attempts, BaseCount, x => ParallelTag.FromValue(x).Next().AsGuid());
-    
+
     [Fact]
     public void ItShouldGenerateTagsAsInteger()
         => Iterate(10, 10, x => ParallelTag.FromValue(x).AsInteger());
-    
+
     [Fact]
     public void ItShouldGenerateDerivedTagsAsInteger()
         => Iterate(10, 10, x => ParallelTag.FromValue(x).Next().AsInteger());
-    
+
+    [Fact]
+    public void ItShouldCorrectlyHandleChainingOperations()
+    {
+        var tag = ParallelTag.FromValue("0000000000000000000000000000000000000000");
+        var tag1 = tag.Next().Next();
+        var tag2 = tag.Next(2);
+        Assert.Equal(tag1, tag2);
+        Assert.Equal(tag1.AsGuid(), tag2.AsGuid());
+        Assert.Equal(tag1.AsLong(), tag2.AsLong());
+        Assert.Equal(tag1.AsInteger(), tag2.AsInteger());
+        
+        var tagA = ParallelTag.FromValue("0000000000000000000000000000000000000000");
+        var tagA1 = tagA.Next();
+        Assert.NotEqual(tagA, tagA1);
+        
+        var tagB = ParallelTag.FromValue("0000000000000000000000000000000000000000");
+        var tagB1 = tagB.Next();
+        var tagB2 = tagB.Next(2);
+        Assert.NotEqual(tagB1, tagB2);
+    }
+
     private static void Iterate<T>(int count, int baseCount, Func<string, T>? valueConverter) where T : notnull
     {
         var generatedValues = new Dictionary<T, string>(); 

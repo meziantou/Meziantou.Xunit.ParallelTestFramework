@@ -37,7 +37,7 @@ public sealed class ParallelTestMethodRunner : XunitTestMethodRunner
                 a.GetNamedArgument<bool>(nameof(MemberDataAttribute.DisableDiscoveryEnumeration)));
         
         var summary = new RunSummary();
-        if (ParallelSettings.GetSetting(TestMethod.TestClass.Class.Assembly.Name, "xunit.discovery.PreEnumerateTheories") == true && !disableParallelization)
+        if (ParallelSettings.GetSetting(TestMethod.TestClass.Class.Assembly.Name, "xunit.discovery.PreEnumerateTheories") && !disableParallelization)
         {
             var caseTasks = TestCases.Select(x => RunTestCaseAsync2(x, disableParallelization));
             var caseSummaries = await Task.WhenAll(caseTasks).ConfigureAwait(false);
@@ -71,7 +71,7 @@ public sealed class ParallelTestMethodRunner : XunitTestMethodRunner
     protected override async Task<RunSummary> RunTestCaseAsync(IXunitTestCase testCase)
     {
         var args = _constructorArguments.Select(a => a is TestOutputHelper ? new TestOutputHelper() : a).ToArray();
-        var parallelTag = ParallelTag.FromTestCase(_constructorArguments, testCase, testCase.TestMethodArguments);
+        var parallelTag = ParallelTag.FromTestCase(_constructorArguments, testCase);
         if (parallelTag != null)
             ParallelTag.Inject(ref parallelTag, ref args);
 
