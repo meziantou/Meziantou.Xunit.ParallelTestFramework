@@ -24,6 +24,7 @@ internal static class ParallelSettings
         RefineParallelSetting(assemblyName.FullName, opts, setting, value);
     }
     
+    
     internal static void RefineParallelSetting(string assemblyName, ITestFrameworkOptions opts, string setting, bool value)
     {
         if (ShouldForceParallelize(assemblyName, opts).Force)
@@ -35,7 +36,7 @@ internal static class ParallelSettings
     public static bool GetSetting(string assemblyName, string setting)
     {
         assemblyName = AssemblyInfoExtractor.ExtractNameAndVersion(assemblyName);
-        var res = TestCollectionsCache.TryGetValue(assemblyName, out TestAsm? asm);
+        var res = TestCollectionsCache.TryGetValue(assemblyName, out var asm);
         if (!res) throw new InvalidOperationException();
         var val = asm != null && asm.Opts.GetValue<bool>(setting);
         return val;

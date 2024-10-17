@@ -65,6 +65,6 @@ public class ParallelTagTests
                 }
             }
         }
-        return null;
+        throw new InvalidOperationException($"Method {_tag} not found");
     }
 }

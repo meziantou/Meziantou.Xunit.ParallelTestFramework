@@ -9,6 +9,17 @@
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <RootNamespace>Tennisi.Xunit</RootNamespace>
   </PropertyGroup>
+
+  <PropertyGroup>
+    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Update="$(OutputPath)$(AssemblyName).xml" Pack="true" PackagePath="lib\net7.0\" />
+    <None Update="$(OutputPath)$(AssemblyName).xml" Pack="true" PackagePath="lib\net7.0-windows\" />
+    <None Update="$(OutputPath)$(AssemblyName).xml" Pack="true" PackagePath="lib\net8.0\" />
+    <None Update="$(OutputPath)$(AssemblyName).xml" Pack="true" PackagePath="lib\net8.0-windows\" />
+  </ItemGroup>
   
   <ItemGroup>
     <PackageReference Include="xunit.extensibility.execution" Version="2.4.1" />
