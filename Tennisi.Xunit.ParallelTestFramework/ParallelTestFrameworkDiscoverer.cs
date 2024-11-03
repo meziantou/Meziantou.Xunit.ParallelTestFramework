@@ -1,5 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
+﻿using System.Globalization;
 using Xunit;
 using Xunit.Abstractions;
 using Xunit.Sdk;
@@ -27,8 +26,7 @@ public class ParallelTestFrameworkDiscoverer: XunitTestFrameworkDiscoverer
 
         return FindTestsForMethod2(testMethod, includeSourceInformation, messageBus, discoveryOptions, retryCount);
     }
-
-    [SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope")]
+    
     protected virtual bool FindTestsForMethod2(ITestMethod testMethod, bool includeSourceInformation,
         IMessageBus messageBus,
         ITestFrameworkDiscoveryOptions discoveryOptions, int retryCount)
@@ -40,7 +38,7 @@ public class ParallelTestFrameworkDiscoverer: XunitTestFrameworkDiscoverer
             var message = string.Format(CultureInfo.CurrentCulture,
                 "Test method '{0}.{1}' has multiple [Fact]-derived attributes", testMethod.TestClass.Class.Name,
                 testMethod.Method.Name);
-            var testCase = new ExecutionErrorTestCase(DiagnosticMessageSink, TestMethodDisplay.ClassAndMethod,
+            using var testCase = new ExecutionErrorTestCase(DiagnosticMessageSink, TestMethodDisplay.ClassAndMethod,
                 TestMethodDisplayOptions.None, testMethod, message);
                 return ReportDiscoveredTestCase(testCase, includeSourceInformation, messageBus);
         }

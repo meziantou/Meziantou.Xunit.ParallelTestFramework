@@ -46,6 +46,8 @@ internal class RetryTestCase : IXunitTestCase
 
             diagnosticMessageSink.OnMessage(
                 new DiagnosticMessage("Execution of '{0}' failed (attempt #{1}), test retrying...", DisplayName, runCount));
+
+            await Task.Delay(1, cancellationTokenSource.Token);
         }
     }
 

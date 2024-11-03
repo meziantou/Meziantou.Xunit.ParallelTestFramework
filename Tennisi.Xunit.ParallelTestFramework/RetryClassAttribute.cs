@@ -35,7 +35,6 @@ namespace Tennisi.Xunit;
 /// }
 /// </code>
 /// </example>
-[XunitTestCaseDiscoverer("Tennisi.Xunit.RetryFactDiscoverer", "Tennisi.Xunit.ParallelTestFramework")]
 [AttributeUsage(AttributeTargets.Class)]
 public sealed class RetryClassAttribute : Attribute
 {

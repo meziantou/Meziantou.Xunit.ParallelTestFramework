@@ -5,7 +5,7 @@ namespace Tennisi.Xunit;
 internal static class RetryHelper
 {
     private const int DefaultRetryCount = 1;
-    private const int MaxRetryCount = 3;
+    private const int MaxRetryCount = 10;
     private const string RetryCountName = nameof(RetryTheoryAttribute.RetryCount); 
     
     internal static int GetRetryCount(this IAttributeInfo attributeInfo)

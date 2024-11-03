@@ -5,7 +5,7 @@ namespace Tennisi.Xunit.ParallelTestFramework.Tests;
 
 public class RetryTest
 {
-    private const int RetryN = 3;
+    private const int RetryN = 5;
 
     public class CounterFixture
     {

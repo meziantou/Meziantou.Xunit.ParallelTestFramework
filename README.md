@@ -24,6 +24,19 @@ ___
 
 ### Настройка DisableTestParallelization отношения к этой библиотеке не имеет.
 
+### Retrying tests in MonoRepo
+
+Для подробной информации см. в метаданных Tennisi.Xunit.ParallelTestFramework
+RetryFactAttribute, RetryTheoryAttribute, RetryClassAttribute
+
+RetryFactAttribute используется вместо стандратного FactAttribute с указанием макс. кол-ва попыток.
+
+RetryTheoryAttribute использется вместо стандратного TheoryAttrubute с указанием макс. кол-ва попыток. [Работает только с xunit.discovery.PreEnumerateTheories или FullTestParallelization]
+
+RetryClassAttribute использется для указания макс. кол-ва попыток всем фактам и теориям в тестовом классе, если они не определены для тестовых методов.
+
+В Логах ищи test retrying... что бы найти подозрительные тесты
+
 
 
 Tennisi! By default, xUnit runs all test cases in a test class synchronously.
