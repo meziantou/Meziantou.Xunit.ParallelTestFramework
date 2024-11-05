@@ -22,7 +22,7 @@
   </ItemGroup>
   
   <ItemGroup>
-    <PackageReference Include="xunit.extensibility.execution" Version="2.4.1" />
+    <PackageReference Include="xunit.extensibility.execution" Version="2.9.2" />
   </ItemGroup>
   
   <ItemGroup>
