@@ -15,6 +15,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tennisi.Xunit.ParallelTestFramework.Tests", "Tennisi.Xunit.ParallelTestFramework.Tests\Tennisi.Xunit.ParallelTestFramework.Tests.csproj", "{25DEF5B0-7B2E-4CA7-A145-CAB9F1B68D53}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tennisi.Xunit.ParallelTestFramework.UI.Tests", "Tennisi.Xunit.ParallelTestFramework.UI.Tests\Tennisi.Xunit.ParallelTestFramework.UI.Tests.csproj", "{205A1A8F-72EB-46F1-9C2E-97B6611FA5E3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tennisi.Xunit.ParallelTestFramework.UI", "Tennisi.Xunit.ParallelTestFramework.UI\Tennisi.Xunit.ParallelTestFramework.UI.csproj", "{A1C0D3F9-9719-4756-9305-22B20CA518B6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,6 +33,14 @@ Global
 		{25DEF5B0-7B2E-4CA7-A145-CAB9F1B68D53}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{25DEF5B0-7B2E-4CA7-A145-CAB9F1B68D53}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{25DEF5B0-7B2E-4CA7-A145-CAB9F1B68D53}.Release|Any CPU.Build.0 = Release|Any CPU
+		{205A1A8F-72EB-46F1-9C2E-97B6611FA5E3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{205A1A8F-72EB-46F1-9C2E-97B6611FA5E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{205A1A8F-72EB-46F1-9C2E-97B6611FA5E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{205A1A8F-72EB-46F1-9C2E-97B6611FA5E3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A1C0D3F9-9719-4756-9305-22B20CA518B6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A1C0D3F9-9719-4756-9305-22B20CA518B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A1C0D3F9-9719-4756-9305-22B20CA518B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A1C0D3F9-9719-4756-9305-22B20CA518B6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

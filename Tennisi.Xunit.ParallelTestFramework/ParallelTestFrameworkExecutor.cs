@@ -19,7 +19,7 @@ public class ParallelTestFrameworkExecutor : XunitTestFrameworkExecutor
     protected override async void RunTestCases(IEnumerable<IXunitTestCase> testCases, IMessageSink executionMessageSink,
         ITestFrameworkExecutionOptions executionOptions)
     {
-        ParallelSettings.RefineParallelSetting(_assemblyName, executionOptions, "xunit.execution.DisableParallelization", false);
+        ParallelSettings.RefineParallelSetting(_assemblyName, executionOptions);
         using var assemblyRunner = new ParallelTestAssemblyRunner(TestAssembly, testCases, DiagnosticMessageSink,
             executionMessageSink, executionOptions);
         await assemblyRunner.RunAsync();

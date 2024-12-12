@@ -97,7 +97,7 @@ public class ParallelDerivationTagTests
         return index.ToString("x").PadLeft(40, '0').Substring(0, 40);
     }
 
-    private class DeterministicGenerator
+    private sealed class DeterministicGenerator
     {
         private readonly string _baseValue;
 

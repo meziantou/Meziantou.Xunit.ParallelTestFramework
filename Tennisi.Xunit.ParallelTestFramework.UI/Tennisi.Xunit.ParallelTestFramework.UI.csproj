@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFrameworks>net7.0-windows;net8.0-windows</TargetFrameworks>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <Description>Run xUnit test cases in parallel</Description>
+        <IsPackable>True</IsPackable>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <RootNamespace>Tennisi.Xunit</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="xunit.extensibility.execution" Version="2.9.2" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <FrameworkReference Include="Microsoft.WindowsDesktop.App" />
+      <ProjectReference Include="..\Tennisi.Xunit.ParallelTestFramework\Tennisi.Xunit.ParallelTestFramework.csproj" />
+    </ItemGroup>
+
+</Project>

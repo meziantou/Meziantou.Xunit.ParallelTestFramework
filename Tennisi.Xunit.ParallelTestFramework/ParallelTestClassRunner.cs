@@ -7,6 +7,7 @@ namespace Tennisi.Xunit;
 
 public sealed class ParallelTestClassRunner : XunitTestClassRunner
 {
+    private readonly bool _disableTestParallelizationOnAssembly;
     public ParallelTestClassRunner(ITestClass testClass,
         IReflectionTypeInfo @class,
         IEnumerable<IXunitTestCase> testCases,
@@ -18,6 +19,8 @@ public sealed class ParallelTestClassRunner : XunitTestClassRunner
         IDictionary<Type, object> collectionFixtureMappings)
         : base(testClass, @class, testCases, diagnosticMessageSink, messageBus, testCaseOrderer, aggregator, cancellationTokenSource, collectionFixtureMappings)
     {
+        _disableTestParallelizationOnAssembly = 
+            ParallelSettings.GetSetting(@Class.Assembly.Name, "xunit.execution.DisableParallelization");
     }
 
     protected override Task<RunSummary> RunTestMethodAsync(ITestMethod testMethod,
@@ -40,7 +43,7 @@ public sealed class ParallelTestClassRunner : XunitTestClassRunner
         var disableParallelizationOnCustomCollection = TestClass.Class.GetCustomAttributes(typeof(CollectionAttribute)).Any()
                                                        && !TestClass.Class.GetCustomAttributes(typeof(EnableParallelizationAttribute)).Any();
 
-        var disableParallelization = disableParallelizationAttribute || disableParallelizationOnCustomCollection;
+        var disableParallelization = _disableTestParallelizationOnAssembly || disableParallelizationAttribute || disableParallelizationOnCustomCollection;
 
         if (disableParallelization)
             return await base.RunTestMethodsAsync().ConfigureAwait(false);

@@ -3,4 +3,9 @@
         <AssemblyAttribute Include="Tennisi.Xunit.FullTestParallelizationAttribute">
         </AssemblyAttribute>
     </ItemGroup>
+
+    <ItemGroup Condition="'$(DisableTestParallelization)' == 'true'">
+        <AssemblyAttribute Include="Tennisi.Xunit.DisableTestParallelizationAttribute">
+        </AssemblyAttribute>
+    </ItemGroup>
 </Project>

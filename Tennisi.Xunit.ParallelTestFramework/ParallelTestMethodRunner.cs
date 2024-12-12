@@ -6,6 +6,7 @@ namespace Tennisi.Xunit;
 
 public sealed class ParallelTestMethodRunner : XunitTestMethodRunner
 {
+    private readonly bool _disableTestParallelizationOnAssembly;
     private readonly IMessageSink _diagnosticMessageSink;
     private readonly object[] _constructorArguments;
 
@@ -25,11 +26,15 @@ public sealed class ParallelTestMethodRunner : XunitTestMethodRunner
     {
         _diagnosticMessageSink = diagnosticMessageSink;
         _constructorArguments = constructorArguments;
+        _disableTestParallelizationOnAssembly = 
+            ParallelSettings.GetSetting(@Class.Assembly.Name, "xunit.execution.DisableParallelization");
+
     }
 
     protected override async Task<RunSummary?> RunTestCasesAsync()
     {
         var disableParallelization =
+            _disableTestParallelizationOnAssembly ||
             TestMethod.TestClass.Class.GetCustomAttributes(typeof(DisableParallelizationAttribute)).Any()
             || TestMethod.TestClass.Class.GetCustomAttributes(typeof(CollectionAttribute)).Any()
             || TestMethod.Method.GetCustomAttributes(typeof(DisableParallelizationAttribute)).Any()
@@ -37,7 +42,7 @@ public sealed class ParallelTestMethodRunner : XunitTestMethodRunner
                 a.GetNamedArgument<bool>(nameof(MemberDataAttribute.DisableDiscoveryEnumeration)));
         
         var summary = new RunSummary();
-        if (ParallelSettings.GetSetting(TestMethod.TestClass.Class.Assembly.Name, "xunit.discovery.PreEnumerateTheories") && !disableParallelization)
+        if (!disableParallelization && ParallelSettings.GetSetting(TestMethod.TestClass.Class.Assembly.Name, "xunit.discovery.PreEnumerateTheories"))
         {
             var caseTasks = TestCases.Select(x => RunTestCaseAsync2(x, disableParallelization));
             var caseSummaries = await Task.WhenAll(caseTasks).ConfigureAwait(false);

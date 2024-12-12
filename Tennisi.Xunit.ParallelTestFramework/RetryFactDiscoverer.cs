@@ -5,11 +5,11 @@ namespace Tennisi.Xunit;
 
 public class RetryFactDiscoverer : IXunitTestCaseDiscoverer
 {
-    readonly IMessageSink _diagnosticMessageSink;
+    private readonly IMessageSink _diagnosticMessageSink;
 
     public RetryFactDiscoverer(IMessageSink diagnosticMessageSink)
     {
-        this._diagnosticMessageSink = diagnosticMessageSink;
+        _diagnosticMessageSink = diagnosticMessageSink;
     }
 
     public IEnumerable<IXunitTestCase> Discover(ITestFrameworkDiscoveryOptions discoveryOptions, ITestMethod testMethod, IAttributeInfo factAttribute)
