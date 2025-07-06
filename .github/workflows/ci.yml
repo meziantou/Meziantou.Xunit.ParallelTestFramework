@@ -23,8 +23,8 @@ jobs:
     - uses: actions/checkout@v2
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
-    - run: dotnet test Meziantou.Xunit.ParallelTestFramework.sln --configuration Release
-    - run: dotnet pack Meziantou.Xunit.ParallelTestFramework.sln --configuration Release --output ${{ env.NuGetDirectory }} --no-build /bl
+    - run: dotnet test Meziantou.Xunit.ParallelTestFramework.slnx --configuration Release
+    - run: dotnet pack Meziantou.Xunit.ParallelTestFramework.slnx --configuration Release --output ${{ env.NuGetDirectory }} --no-build /bl
     - uses: actions/upload-artifact@v2
       with:
         name: nuget
