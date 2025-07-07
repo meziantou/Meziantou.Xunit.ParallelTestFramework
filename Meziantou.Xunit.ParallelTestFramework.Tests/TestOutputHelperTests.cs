@@ -1,5 +1,7 @@
 using Xunit;
+#if !XUNIT_V3
 using Xunit.Abstractions;
+#endif
 
 namespace Meziantou.Xunit.ParallelTestFramework.Tests;
 
