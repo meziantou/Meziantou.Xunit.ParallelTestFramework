@@ -95,7 +95,7 @@ The code is greatly inspired by the sample from [Travis Mortimer](https://github
 > To ensure the correct behavior, disable the `preEnumerateTheories` setting in your `xunit.runner.json` file:
 > ```json
 > {
->   "parallelizeTestCollections": true,
+>   "$schema": "https://xunit.net/schema/current/xunit.runner.schema.json",
 >   "preEnumerateTheories": false
 > }
 ```
