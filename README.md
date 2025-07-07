@@ -94,10 +94,10 @@ The code is greatly inspired by the sample from [Travis Mortimer](https://github
 > If this setting is enabled, you may get unexpected results.
 > To ensure the correct behavior, disable the `preEnumerateTheories` setting in your `xunit.runner.json` file:
 > ```json
-{
-  "parallelizeTestCollections": true,
-  "preEnumerateTheories": false
-}
+> {
+>   "parallelizeTestCollections": true,
+>   "preEnumerateTheories": false
+> }
 ```
 
 ## Parallel in a collection
