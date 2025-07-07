@@ -18,14 +18,14 @@ defaults:
 
 jobs:
   create_nuget:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     steps:
-    - uses: actions/checkout@v2
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v1
+    - uses: actions/checkout@v4
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
     - run: dotnet test Meziantou.Xunit.ParallelTestFramework.sln --configuration Release
     - run: dotnet pack Meziantou.Xunit.ParallelTestFramework.sln --configuration Release --output ${{ env.NuGetDirectory }} --no-build /bl
-    - uses: actions/upload-artifact@v2
+    - uses: actions/upload-artifact@v4
       with:
         name: nuget
         if-no-files-found: error
