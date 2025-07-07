@@ -98,7 +98,7 @@ The code is greatly inspired by the sample from [Travis Mortimer](https://github
 >   "$schema": "https://xunit.net/schema/current/xunit.runner.schema.json",
 >   "preEnumerateTheories": false
 > }
-```
+> ```
 
 ## Parallel in a collection
 
