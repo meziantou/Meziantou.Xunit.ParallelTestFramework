@@ -1,6 +1,11 @@
 By default, xUnit runs all test cases in a test class synchronously.
 This package extends the default test framework to execute tests in parallel.
 
+For xUnit v3:
+```shell
+dotnet add package Meziantou.Xunit.v3.ParallelTestFramework
+```
+For xUnit v2:
 ```shell
 dotnet add package Meziantou.Xunit.ParallelTestFramework
 ```
@@ -84,6 +89,16 @@ public class SequentialTests
 
 The code is greatly inspired by the sample from [Travis Mortimer](https://github.com/tmort93): <https://github.com/xunit/xunit/issues/1986#issuecomment-831322722>
 
+> [!IMPORTANT]  
+> This package is not compatible with the `preEnumerateTheories` xUnit setting, which is typically enabled by default when using xUnit v3 and with Microsoft Testing Platform (not VSTest).
+> If this setting is enabled, you may get unexpected results.
+> To ensure the correct behavior, disable the `preEnumerateTheories` setting in your `xunit.runner.json` file:
+> ```json
+{
+  "parallelizeTestCollections": true,
+  "preEnumerateTheories": false
+}
+```
 
 ## Parallel in a collection
 
