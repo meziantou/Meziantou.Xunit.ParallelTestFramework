@@ -91,7 +91,7 @@ The code is greatly inspired by the sample from [Travis Mortimer](https://github
 
 > [!IMPORTANT]
 > This package requires the [`preEnumerateTheories`](https://xunit.net/docs/configuration-files#preEnumerateTheories) xUnit setting to be enabled (true).
-> xUnit v3 will default this setting to `false` when using it with Microsoft Testing Platform (instead of VSTest).
+> xUnit v3 will default this setting to `false` when using it with [Microsoft Testing Platform](https://learn.microsoft.com/en-us/dotnet/core/testing/microsoft-testing-platform-intro?tabs=dotnetcli&WT.mc_id=DT-MVP-5003978) (instead of VSTest).
 > If this setting is not enabled, you may get unexpected results.
 > To ensure the correct behavior, you must enable the `preEnumerateTheories` setting in your `xunit.runner.json` file:
 > ```json
