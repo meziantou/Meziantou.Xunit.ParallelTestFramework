@@ -90,7 +90,7 @@ public class SequentialTests
 The code is greatly inspired by the sample from [Travis Mortimer](https://github.com/tmort93): <https://github.com/xunit/xunit/issues/1986#issuecomment-831322722>
 
 > [!IMPORTANT]
-> This package requires the `preEnumerateTheories` xUnit setting to be enabled (true).
+> This package requires the [`preEnumerateTheories`](https://xunit.net/docs/configuration-files#preEnumerateTheories) xUnit setting to be enabled (true).
 > xUnit v3 will default this setting to `false` when using it with Microsoft Testing Platform (instead of VSTest).
 > If this setting is not enabled, you may get unexpected results.
 > To ensure the correct behavior, you must enable the `preEnumerateTheories` setting in your `xunit.runner.json` file:
