@@ -1,4 +1,3 @@
-using Xunit;
 using Xunit.Abstractions;
 using Xunit.Sdk;
 
@@ -18,7 +17,7 @@ public class ParallelTestCollectionRunner : XunitTestCollectionRunner
     protected override async Task<RunSummary> RunTestClassesAsync()
     {
 
-        if (TestCollection.CollectionDefinition != null)
+        if (TestCollection.CollectionDefinition is not null)
         {
             var enableParallelizationAttribute = TestCollection.CollectionDefinition.GetCustomAttributes(typeof(EnableParallelizationAttribute)).Any();
             if (enableParallelizationAttribute)

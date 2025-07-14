@@ -43,7 +43,7 @@ public class ParallelTestCollectionRunner : XunitTestCollectionRunnerBase<XunitT
         if (ctxt.TestCollection.CollectionDefinition != null)
         {
             var enableParallelizationAttribute = ctxt.TestCollection.CollectionDefinition
-                .GetCustomAttributes(typeof(EnableParallelizationAttribute), true).Any();
+                .GetCustomAttributes(typeof(EnableParallelizationAttribute), inherit: true).Any();
             if (enableParallelizationAttribute)
             {
                 var summary = new RunSummary();

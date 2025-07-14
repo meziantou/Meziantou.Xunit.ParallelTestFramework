@@ -2,15 +2,8 @@ using Xunit;
 
 namespace Meziantou.Xunit.ParallelTestFramework.Tests;
 
-public class BlockingCollectionTests : IClassFixture<ConcurrencyFixture>
+public class BlockingCollectionTests(ConcurrencyFixture fixture) : IClassFixture<ConcurrencyFixture>
 {
-    private readonly ConcurrencyFixture fixture;
-
-    public BlockingCollectionTests(ConcurrencyFixture fixture)
-    {
-        this.fixture = fixture;
-    }
-
     [Fact]
     public void Fact1()
     {

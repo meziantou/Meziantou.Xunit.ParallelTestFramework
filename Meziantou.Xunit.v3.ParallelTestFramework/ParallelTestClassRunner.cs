@@ -31,12 +31,12 @@ public class ParallelTestClassRunner : XunitTestClassRunnerBase<XunitTestClassRu
     // https://github.com/xunit/xunit/blob/main/src/xunit.v3.core/Runners/TestClassRunner.cs#L254-L292
     protected override async ValueTask<RunSummary> RunTestMethods(XunitTestClassRunnerContext ctxt, Exception? exception)
     {
-        if (ctxt == null) throw new ArgumentNullException(nameof(ctxt));
+        if (ctxt is null) throw new ArgumentNullException(nameof(ctxt));
         
-        var disableParallelizationAttribute = ctxt.TestClass.Class.GetCustomAttributes(typeof(DisableParallelizationAttribute)).Any();
+        var disableParallelizationAttribute = ctxt.TestClass.Class.GetCustomAttributes<DisableParallelizationAttribute>().Any();
 
-        var disableParallelizationOnCustomCollection = ctxt.TestClass.Class.GetCustomAttributes(typeof(CollectionAttribute)).Any() 
-                                                       && !ctxt.TestClass.Class.GetCustomAttributes(typeof(EnableParallelizationAttribute)).Any();
+        var disableParallelizationOnCustomCollection = ctxt.TestClass.Class.GetCustomAttributes<CollectionAttribute>().Any() 
+                                                       && !ctxt.TestClass.Class.GetCustomAttributes<EnableParallelizationAttribute>().Any();
 
         var disableParallelization = disableParallelizationAttribute || disableParallelizationOnCustomCollection;
 
@@ -65,7 +65,7 @@ public class ParallelTestClassRunner : XunitTestClassRunnerBase<XunitTestClassRu
             exception switch
             {
                 null => RunTestMethod(ctxt, m.Key as IXunitTestMethod, m.ToArray(), constructorArguments).AsTask(),
-                not null => FailTestMethod(ctxt, m.Key as IXunitTestMethod, m.ToArray(), constructorArguments, exception).AsTask()
+                not null => FailTestMethod(ctxt, m.Key as IXunitTestMethod, m.ToArray(), constructorArguments, exception).AsTask(),
             });
         
         var methodSummaries = await Task.WhenAll(methodTasks).ConfigureAwait(false);
@@ -80,7 +80,8 @@ public class ParallelTestClassRunner : XunitTestClassRunnerBase<XunitTestClassRu
     protected override async ValueTask<RunSummary> RunTestMethod(XunitTestClassRunnerContext ctxt, IXunitTestMethod? testMethod, IReadOnlyCollection<IXunitTestCase> testCases,
         object?[] constructorArguments)
     {
-        if (ctxt == null) throw new ArgumentNullException(nameof(ctxt));
+        if (ctxt is null)
+            throw new ArgumentNullException(nameof(ctxt));
         
         return await ParallelTestMethodRunner.Instance.Run(testMethod ?? throw new ArgumentNullException(nameof(testMethod)), testCases, ctxt.ExplicitOption, ctxt.MessageBus, ctxt.Aggregator.Clone(), ctxt.CancellationTokenSource, constructorArguments).ConfigureAwait(false);
     }

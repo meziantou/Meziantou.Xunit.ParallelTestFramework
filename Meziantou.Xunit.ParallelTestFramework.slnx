@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path="Directory.Build.props" />
+    <File Path="global.json" />
+    <File Path="README.md" />
+  </Folder>
+  <Project Path="Meziantou.Xunit.ParallelTestFramework.Tests/Meziantou.Xunit.ParallelTestFramework.Tests.csproj" />
+  <Project Path="Meziantou.Xunit.ParallelTestFramework/Meziantou.Xunit.ParallelTestFramework.csproj" />
+  <Project Path="Meziantou.Xunit.v3.ParallelTestFramework.Tests/Meziantou.Xunit.v3.ParallelTestFramework.Tests.csproj" />
+  <Project Path="Meziantou.Xunit.v3.ParallelTestFramework/Meziantou.Xunit.v3.ParallelTestFramework.csproj" />
+</Solution>
