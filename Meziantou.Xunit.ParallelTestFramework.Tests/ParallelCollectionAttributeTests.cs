@@ -4,15 +4,8 @@ namespace Meziantou.Xunit.ParallelTestFramework.Tests;
 
 [Collection("Parallel")]
 [EnableParallelization]
-public class ParallelCollectionAttributeTests : IClassFixture<ConcurrencyFixture>
+public class ParallelCollectionAttributeTests(ConcurrencyFixture fixture) : IClassFixture<ConcurrencyFixture>
 {
-    private readonly ConcurrencyFixture fixture;
-
-    public ParallelCollectionAttributeTests(ConcurrencyFixture fixture)
-    {
-        this.fixture = fixture;
-    }
-
     [Fact]
     public async Task Fact1()
     {

@@ -3,15 +3,8 @@ using Xunit;
 namespace Meziantou.Xunit.ParallelTestFramework.Tests;
 
 [DisableParallelization]
-public class SequentialCollectionTests : IClassFixture<ConcurrencyFixture>
+public class SequentialCollectionTests(ConcurrencyFixture fixture) : IClassFixture<ConcurrencyFixture>
 {
-    private readonly ConcurrencyFixture fixture;
-
-    public SequentialCollectionTests(ConcurrencyFixture fixture)
-    {
-        this.fixture = fixture;
-    }
-
     [Fact]
     public async Task Fact1()
     {

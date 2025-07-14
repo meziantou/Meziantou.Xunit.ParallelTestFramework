@@ -6,14 +6,14 @@ namespace Meziantou.Xunit;
 
 public class ParallelTestMethodRunner : XunitTestMethodRunner
 {
-    readonly object[] constructorArguments;
-    readonly IMessageSink diagnosticMessageSink;
+    private readonly object[] _constructorArguments;
+    private readonly IMessageSink _diagnosticMessageSink;
 
     public ParallelTestMethodRunner(ITestMethod testMethod, IReflectionTypeInfo @class, IReflectionMethodInfo method, IEnumerable<IXunitTestCase> testCases, IMessageSink diagnosticMessageSink, IMessageBus messageBus, ExceptionAggregator aggregator, CancellationTokenSource cancellationTokenSource, object[] constructorArguments)
         : base(testMethod, @class, method, testCases, diagnosticMessageSink, messageBus, aggregator, cancellationTokenSource, constructorArguments)
     {
-        this.constructorArguments = constructorArguments;
-        this.diagnosticMessageSink = diagnosticMessageSink;
+        _constructorArguments = constructorArguments;
+        _diagnosticMessageSink = diagnosticMessageSink;
     }
 
     // This method has been slightly modified from the original implementation to run tests in parallel
@@ -44,18 +44,18 @@ public class ParallelTestMethodRunner : XunitTestMethodRunner
     protected override async Task<RunSummary> RunTestCaseAsync(IXunitTestCase testCase)
     {
         // Create a new TestOutputHelper for each test case since they cannot be reused when running in parallel
-        var args = constructorArguments.Select(a => a is TestOutputHelper ? new TestOutputHelper() : a).ToArray();
+        var args = _constructorArguments.Select(a => a is TestOutputHelper ? new TestOutputHelper() : a).ToArray();
 
-        var action = () => testCase.RunAsync(diagnosticMessageSink, MessageBus, args, new ExceptionAggregator(Aggregator), CancellationTokenSource);
+        Task<RunSummary> Action() => testCase.RunAsync(_diagnosticMessageSink, MessageBus, args, new ExceptionAggregator(Aggregator), CancellationTokenSource);
 
         // Respect MaxParallelThreads by using the MaxConcurrencySyncContext if it exists, mimicking how collections are run
         // https://github.com/xunit/xunit/blob/2.4.2/src/xunit.execution/Sdk/Frameworks/Runners/XunitTestAssemblyRunner.cs#L169-L176
-        if (SynchronizationContext.Current != null)
+        if (SynchronizationContext.Current is not null)
         {
             var scheduler = TaskScheduler.FromCurrentSynchronizationContext();
-            return await Task.Factory.StartNew(action, CancellationTokenSource.Token, TaskCreationOptions.DenyChildAttach | TaskCreationOptions.HideScheduler, scheduler).Unwrap().ConfigureAwait(false);
+            return await Task.Factory.StartNew(Action, CancellationTokenSource.Token, TaskCreationOptions.DenyChildAttach | TaskCreationOptions.HideScheduler, scheduler).Unwrap().ConfigureAwait(false);
         }
 
-        return await Task.Run(action, CancellationTokenSource.Token).ConfigureAwait(false);
+        return await Task.Run(Action, CancellationTokenSource.Token).ConfigureAwait(false);
     }
 }

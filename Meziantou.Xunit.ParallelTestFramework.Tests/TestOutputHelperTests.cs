@@ -5,15 +5,8 @@ using Xunit.Abstractions;
 
 namespace Meziantou.Xunit.ParallelTestFramework.Tests;
 
-public class TestOutputHelperTests
+public class TestOutputHelperTests(ITestOutputHelper output)
 {
-    private readonly ITestOutputHelper output;
-
-    public TestOutputHelperTests(ITestOutputHelper output)
-    {
-        this.output = output;
-    }
-
     [Fact]
     public void Fact1()
     {

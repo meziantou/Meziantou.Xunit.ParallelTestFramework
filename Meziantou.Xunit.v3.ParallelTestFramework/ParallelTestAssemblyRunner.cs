@@ -1,7 +1,9 @@
 using Xunit.Sdk;
 using Xunit.v3;
 
+#pragma warning disable IDE1006 // Naming Styles
 namespace Meziantou.Xunit.v3;
+#pragma warning restore IDE1006 // Naming Styles
 
 public class ParallelTestAssemblyRunner : XunitTestAssemblyRunnerBase<XunitTestAssemblyRunnerContext, IXunitTestAssembly, IXunitTestCollection, IXunitTestCase>
 {

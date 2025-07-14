@@ -1,6 +1,6 @@
 <Project>
   <PropertyGroup>
-    <LangVersion>10</LangVersion>
+    <LangVersion>13</LangVersion>
     <NoWarn>$(NoWarn);CA1014;CA1031;CA1510;CA1860;xUnit1026</NoWarn>
   </PropertyGroup>
 

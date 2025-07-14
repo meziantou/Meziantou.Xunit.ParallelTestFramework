@@ -3,15 +3,8 @@ using Xunit;
 namespace Meziantou.Xunit.ParallelTestFramework.Tests;
 
 [Collection("ParallelMultiClass")]
-public class ParallelCollectionMultiClass2AttributeTests
+public class ParallelCollectionMultiClass2AttributeTests(CollectionConcurrencyFixture fixture)
 {
-    private readonly CollectionConcurrencyFixture fixture;
-
-    public ParallelCollectionMultiClass2AttributeTests(CollectionConcurrencyFixture fixture)
-    {
-        this.fixture = fixture;
-    }
-
     [Fact]
     public async Task Fact1()
     {
