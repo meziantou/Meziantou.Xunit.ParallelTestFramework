@@ -23,7 +23,7 @@
     </ItemGroup>
 
     <ImportGroup>
-        <Import Project="../Meziantou.Xunit.v3.ParallelTestFramework/build/Meziantou.Xunit.v3.ParallelTestFramework.props" />
+        <Import Project="../Meziantou.Xunit.v3.ParallelTestFramework/build/Meziantou.Xunit.v3.ParallelTestFramework.targets" />
     </ImportGroup>
 
     <ItemGroup>
