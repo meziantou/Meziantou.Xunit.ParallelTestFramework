@@ -14,6 +14,7 @@ public class ParallelTestFrameworkExecutor : XunitTestFrameworkExecutor
     public override async ValueTask RunTestCases(IReadOnlyCollection<IXunitTestCase> testCases, IMessageSink executionMessageSink,
         ITestFrameworkExecutionOptions executionOptions, CancellationToken cancellationToken)
     {
-        await ParallelTestAssemblyRunner.Instance.Run(TestAssembly, testCases, executionMessageSink, executionOptions, cancellationToken).ConfigureAwait(false);
+        using var instance = new ParallelTestAssemblyRunner();
+        await instance.Run(TestAssembly, testCases, executionMessageSink, executionOptions, cancellationToken).ConfigureAwait(false);
     }
 }

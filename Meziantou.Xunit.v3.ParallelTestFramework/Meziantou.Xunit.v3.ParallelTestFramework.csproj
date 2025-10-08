@@ -8,7 +8,7 @@
     <IsPackable>True</IsPackable>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <RootNamespace>Meziantou.Xunit.v3</RootNamespace>
-    <Version>1.0.4</Version>
+    <Version>1.0.5</Version>
   </PropertyGroup>
 
   <ItemGroup>

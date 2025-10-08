@@ -5,17 +5,22 @@ using Xunit.v3;
 namespace Meziantou.Xunit.v3;
 #pragma warning restore IDE1006 // Naming Styles
 
-public class ParallelTestAssemblyRunner : XunitTestAssemblyRunnerBase<XunitTestAssemblyRunnerContext, IXunitTestAssembly, IXunitTestCollection, IXunitTestCase>
+public sealed class ParallelTestAssemblyRunner : XunitTestAssemblyRunnerBase<XunitTestAssemblyRunnerContext, IXunitTestAssembly, IXunitTestCollection, IXunitTestCase>, IDisposable
 {
-    public static ParallelTestAssemblyRunner Instance { get; } = new();
+    private ParallelTestExecutionContext? _parallelTestExecutionContext;
+
+    public void Dispose()
+    {
+        _parallelTestExecutionContext?.Dispose();
+    }
 
     protected override async ValueTask<RunSummary> RunTestCollection(XunitTestAssemblyRunnerContext ctxt, IXunitTestCollection testCollection,
         IReadOnlyCollection<IXunitTestCase> testCases)
     {
         if (ctxt is null)
             throw new ArgumentNullException(nameof(ctxt));
-        
-        return await ParallelTestCollectionRunner.Instance.Run(testCollection, testCases, ctxt.ExplicitOption, ctxt.MessageBus, ctxt.Aggregator.Clone(), ctxt.CancellationTokenSource, ctxt.AssemblyFixtureMappings).ConfigureAwait(false);
+
+        return await new ParallelTestCollectionRunner(_parallelTestExecutionContext ?? ParallelTestExecutionContext.Default).Run(testCollection, testCases, ctxt.ExplicitOption, ctxt.MessageBus, ctxt.Aggregator.Clone(), ctxt.CancellationTokenSource, ctxt.AssemblyFixtureMappings).ConfigureAwait(false);
     }
 
     public async ValueTask<RunSummary> Run(
@@ -33,12 +38,12 @@ public class ParallelTestAssemblyRunner : XunitTestAssemblyRunnerBase<XunitTestA
             throw new ArgumentNullException(nameof(executionMessageSink));
         if (executionOptions is null)
             throw new ArgumentNullException(nameof(executionOptions));
-        
+
         var ctxt = new XunitTestAssemblyRunnerContext(testAssembly, testCases, executionMessageSink, executionOptions, cancellationToken);
         await using (ctxt.ConfigureAwait(false))
         {
             await ctxt.InitializeAsync().ConfigureAwait(false);
-
+            _parallelTestExecutionContext = new ParallelTestExecutionContext(ctxt);
             return await Run(ctxt).ConfigureAwait(false);
         }
     }
