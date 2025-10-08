@@ -41,7 +41,7 @@ public sealed class ParallelTestMethodRunner : XunitTestMethodRunnerBase<XunitTe
         var testMethod = ctxt.TestMethod;
         var disableParallelization =
             testMethod.TestClass.Class.GetCustomAttributes<DisableParallelizationAttribute>(inherit: true).Any()
-            || testMethod.TestClass.Class.GetCustomAttributes<CollectionAttribute>(inherit: true).Any()
+            || (testMethod.TestClass.Class.GetCustomAttributes<CollectionAttribute>(inherit: true).Any() && !testMethod.TestClass.Class.GetCustomAttributes<EnableParallelizationAttribute>().Any())
             || testMethod.Method.GetCustomAttributes<DisableParallelizationAttribute>(inherit: true).Any()
             || testMethod.Method.GetCustomAttributes<MemberDataAttribute>(inherit: true).Any(a => a.DisableDiscoveryEnumeration);
 
