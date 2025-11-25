@@ -101,6 +101,30 @@ The code is greatly inspired by the sample from [Travis Mortimer](https://github
 > }
 > ```
 
+## Custom DataAttribute (xUnit v3)
+
+When creating a custom `DataAttribute` in xUnit v3, you must ensure that the `SupportsDiscoveryEnumeration()` method returns `true` for theory data rows to run in parallel.
+If this method returns `false`, the theory data rows will run sequentially.
+
+```c#
+public sealed class CustomDataAttribute : DataAttribute
+{
+    public override ValueTask<IReadOnlyCollection<ITheoryDataRow>> GetData(MethodInfo testMethod, DisposalTracker disposalTracker)
+    {
+        var rows = new List<ITheoryDataRow>
+        {
+            new TheoryDataRow(1),
+            new TheoryDataRow(2),
+            new TheoryDataRow(3),
+        };
+        return new ValueTask<IReadOnlyCollection<ITheoryDataRow>>(rows);
+    }
+
+    // Must return true for parallel execution of theory data rows
+    public override bool SupportsDiscoveryEnumeration() => true;
+}
+```
+
 ## Parallel in a collection
 
 Using the `EnableParallelizationAttribute` on an `ICollectionFixture<T>` enables the parallel execution between classes in a collection.
