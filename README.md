@@ -101,9 +101,9 @@ The code is greatly inspired by the sample from [Travis Mortimer](https://github
 > }
 > ```
 
-## Custom DataAttribute (xUnit v3)
+## Custom DataAttribute
 
-When creating a custom `DataAttribute` in xUnit v3, you must ensure that the `SupportsDiscoveryEnumeration()` method returns `true` for theory data rows to run in parallel.
+When creating a custom `DataAttribute`, you must ensure that the `SupportsDiscoveryEnumeration()` method returns `true` for theory data rows to run in parallel.
 If this method returns `false`, the theory data rows will run sequentially.
 
 ```c#
