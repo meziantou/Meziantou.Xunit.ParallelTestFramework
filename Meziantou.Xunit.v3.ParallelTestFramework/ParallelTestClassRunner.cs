@@ -21,9 +21,11 @@ public class ParallelTestClassRunner : XunitTestClassRunnerBase<XunitTestClassRu
         IMessageBus messageBus,
         ExceptionAggregator aggregator,
         CancellationTokenSource cancellationTokenSource,
+        ParallelMode parallelMode,
+        ExecutionScheduler scheduler,
         FixtureMappingManager collectionFixtureMappings)
     {
-        var ctxt = new XunitTestClassRunnerContext(testClass, testCases, explicitOption, messageBus, DefaultTestCaseOrderer.Instance, aggregator, cancellationTokenSource, collectionFixtureMappings);
+        var ctxt = new XunitTestClassRunnerContext(testClass, testCases, explicitOption, messageBus, aggregator, cancellationTokenSource, parallelMode, scheduler, collectionFixtureMappings);
         await using (ctxt.ConfigureAwait(false))
         {
             await ctxt.InitializeAsync().ConfigureAwait(false);
@@ -53,7 +55,7 @@ public class ParallelTestClassRunner : XunitTestClassRunnerBase<XunitTestClassRu
 
         if (exception is null)
         {
-            orderedTestCases = OrderTestCases(ctxt);
+            orderedTestCases = [.. OrderTestMethods(ctxt).SelectMany(x => x.TestCases)];
             constructorArguments = await CreateTestClassConstructorArguments(ctxt).ConfigureAwait(false);
             exception = ctxt.Aggregator.ToException();
             ctxt.Aggregator.Clear();
@@ -66,12 +68,34 @@ public class ParallelTestClassRunner : XunitTestClassRunnerBase<XunitTestClassRu
 
         var methodGroups = orderedTestCases.GroupBy(tc => tc.TestMethod, TestMethodComparer.Instance);
         var methodTasks = methodGroups.Select(m =>
-            exception switch
-            {
-                null => RunTestMethod(ctxt, m.Key as IXunitTestMethod, m.ToArray(), constructorArguments).AsTask(),
-                not null => FailTestMethod(ctxt, m.Key as IXunitTestMethod, m.ToArray(), constructorArguments, exception).AsTask(),
-            });
+        {
+            var testMethod = m.Key as IXunitTestMethod;
+            var testCases = m.ToArray();
 
+            if (exception is not null)
+            {
+                return FailTestMethod(
+                    ctxt,
+                    testMethod,
+                    testCases,
+                    exception).AsTask();
+            }
+
+            return new ParallelTestMethodRunner(_parallelTestExecutionContext)
+                .Run(
+                    testMethod ?? throw new ArgumentNullException(nameof(testMethod)),
+                    testCases,
+                    ctxt.ExplicitOption,
+                    ctxt.MessageBus,
+                    ctxt.Aggregator.Clone(),
+                    ctxt.CancellationTokenSource,
+                    constructorArguments,
+                    ctxt.ParallelMode,
+                    ctxt.Scheduler,
+                    ctxt.ClassFixtureMappings)
+                .AsTask();
+        });
+        
         var methodSummaries = await Task.WhenAll(methodTasks).ConfigureAwait(false);
         foreach (var methodSummary in methodSummaries)
         {
@@ -79,14 +103,5 @@ public class ParallelTestClassRunner : XunitTestClassRunnerBase<XunitTestClassRu
         }
 
         return summary;
-    }
-
-    protected override async ValueTask<RunSummary> RunTestMethod(XunitTestClassRunnerContext ctxt, IXunitTestMethod? testMethod, IReadOnlyCollection<IXunitTestCase> testCases,
-        object?[] constructorArguments)
-    {
-        if (ctxt is null)
-            throw new ArgumentNullException(nameof(ctxt));
-
-        return await new ParallelTestMethodRunner(_parallelTestExecutionContext).Run(testMethod ?? throw new ArgumentNullException(nameof(testMethod)), testCases, ctxt.ExplicitOption, ctxt.MessageBus, ctxt.Aggregator.Clone(), ctxt.CancellationTokenSource, constructorArguments).ConfigureAwait(false);
     }
 }

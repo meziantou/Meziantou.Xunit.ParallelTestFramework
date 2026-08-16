@@ -23,9 +23,12 @@ public sealed class ParallelTestMethodRunner : XunitTestMethodRunnerBase<XunitTe
         IMessageBus messageBus,
         ExceptionAggregator aggregator,
         CancellationTokenSource cancellationTokenSource,
-        object?[] constructorArguments)
+        object?[] constructorArguments,
+        ParallelMode parallelMode,
+        ExecutionScheduler scheduler,
+        FixtureMappingManager classFixtureMappings)
     {
-        var ctxt = new XunitTestMethodRunnerContext(testMethod, testCases, explicitOption, messageBus, aggregator, cancellationTokenSource, constructorArguments);
+        var ctxt = new XunitTestMethodRunnerContext(testMethod, testCases, explicitOption, messageBus, aggregator, cancellationTokenSource, parallelMode, scheduler, constructorArguments, classFixtureMappings);
         await using (ctxt.ConfigureAwait(false))
         {
             await ctxt.InitializeAsync().ConfigureAwait(false);
@@ -71,7 +74,8 @@ public sealed class ParallelTestMethodRunner : XunitTestMethodRunnerBase<XunitTe
         {
             // Create a new TestOutputHelper for each test case since they cannot be reused when running in parallel
             var args = ctxt.ConstructorArguments.Select(a => a is TestOutputHelper ? new TestOutputHelper() : a).ToArray();
-            var newCtxt = new XunitTestMethodRunnerContext(ctxt.TestMethod, ctxt.TestCases, ctxt.ExplicitOption, ctxt.MessageBus, ctxt.Aggregator, ctxt.CancellationTokenSource, args);
+            var newCtxt = new XunitTestMethodRunnerContext(ctxt.TestMethod, ctxt.TestCases, ctxt.ExplicitOption, ctxt.MessageBus, ctxt.Aggregator, ctxt.CancellationTokenSource,
+                ctxt.ParallelMode, ctxt.Scheduler, args, ctxt.MethodFixtureMappings);
             await using (newCtxt.ConfigureAwait(false))
             {
                 await newCtxt.InitializeAsync().ConfigureAwait(false);

@@ -19,9 +19,11 @@ public class ParallelTestCollectionRunner : XunitTestCollectionRunnerBase<XunitT
         IMessageBus messageBus,
         ExceptionAggregator aggregator,
         CancellationTokenSource cancellationTokenSource,
+        ParallelMode  parallelMode,
+        ExecutionScheduler scheduler,
         FixtureMappingManager assemblyFixtureMappings)
     {
-        var ctxt = new XunitTestCollectionRunnerContext(testCollection, testCases, explicitOption, messageBus, DefaultTestCaseOrderer.Instance, aggregator, cancellationTokenSource, assemblyFixtureMappings);
+        var ctxt = new XunitTestCollectionRunnerContext(testCollection, testCases, explicitOption, messageBus, aggregator, cancellationTokenSource, parallelMode, scheduler, assemblyFixtureMappings);
         await using (ctxt.ConfigureAwait(false))
         {
             await ctxt.InitializeAsync().ConfigureAwait(false);
@@ -35,7 +37,7 @@ public class ParallelTestCollectionRunner : XunitTestCollectionRunnerBase<XunitT
         if (ctxt is null)
             throw new ArgumentNullException(nameof(ctxt));
 
-        return await new ParallelTestClassRunner(_parallelTestExecutionContext).Run(testClass ?? throw new ArgumentNullException(nameof(testClass)), testCases, ctxt.ExplicitOption, ctxt.MessageBus, ctxt.Aggregator.Clone(), ctxt.CancellationTokenSource, ctxt.CollectionFixtureMappings).ConfigureAwait(false);
+        return await new ParallelTestClassRunner(_parallelTestExecutionContext).Run(testClass ?? throw new ArgumentNullException(nameof(testClass)), testCases, ctxt.ExplicitOption, ctxt.MessageBus, ctxt.Aggregator.Clone(), ctxt.CancellationTokenSource, ctxt.ParallelMode, ctxt.Scheduler, ctxt.CollectionFixtureMappings).ConfigureAwait(false);
     }
 
     protected override async ValueTask<RunSummary> RunTestClasses(XunitTestCollectionRunnerContext ctxt,
@@ -52,7 +54,7 @@ public class ParallelTestCollectionRunner : XunitTestCollectionRunnerBase<XunitT
             {
                 var summary = new RunSummary();
 
-                var classTasks = ctxt.TestCases.GroupBy(tc => tc.TestMethod.TestClass, TestClassComparer.Instance)
+                var classTasks = ctxt.TestCases.GroupBy(tc => tc.TestMethod.TestClass)
                     .Select(tc => RunTestClass(ctxt, tc.Key as IXunitTestClass, tc.ToArray()).AsTask());
 
                 var classSummaries = await Task.WhenAll(classTasks)

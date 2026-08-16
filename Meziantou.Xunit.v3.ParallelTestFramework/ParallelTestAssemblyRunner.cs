@@ -20,7 +20,7 @@ public sealed class ParallelTestAssemblyRunner : XunitTestAssemblyRunnerBase<Xun
         if (ctxt is null)
             throw new ArgumentNullException(nameof(ctxt));
 
-        return await new ParallelTestCollectionRunner(_parallelTestExecutionContext ?? ParallelTestExecutionContext.Default).Run(testCollection, testCases, ctxt.ExplicitOption, ctxt.MessageBus, ctxt.Aggregator.Clone(), ctxt.CancellationTokenSource, ctxt.AssemblyFixtureMappings).ConfigureAwait(false);
+        return await new ParallelTestCollectionRunner(_parallelTestExecutionContext ?? ParallelTestExecutionContext.Default).Run(testCollection, testCases, ctxt.ExplicitOption, ctxt.MessageBus, ctxt.Aggregator.Clone(), ctxt.CancellationTokenSource, ctxt.ParallelMode, ctxt.Scheduler, ctxt.AssemblyFixtureMappings).ConfigureAwait(false);
     }
 
     public async ValueTask<RunSummary> Run(
