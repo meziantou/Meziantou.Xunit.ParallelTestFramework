@@ -1,3 +1,8 @@
+> [!IMPORTANT]
+> xUnit.net v3 **4.0.0** ships this functionality out of the box with the new `ParallelMode.All` parallel mode.
+> If you target xUnit v3 4.0.0 or later, you no longer need this package — see
+> **[MIGRATION.md](MIGRATION.md)** for how to move to the built-in feature.
+
 By default, xUnit runs all test cases in a test class synchronously.
 This package extends the default test framework to execute tests in parallel.
 
