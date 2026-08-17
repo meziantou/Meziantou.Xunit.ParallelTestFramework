@@ -66,10 +66,10 @@ public class ParallelTestClassRunner : XunitTestClassRunnerBase<XunitTestClassRu
             constructorArguments = Array.Empty<object?>();
         }
 
-        var methodGroups = orderedTestCases.GroupBy(tc => tc.TestMethod, TestMethodComparer.Instance);
+        var methodGroups = orderedTestCases.GroupBy(tc => tc.TestMethod, TestMethodComparer<IXunitTestMethod>.Instance);
         var methodTasks = methodGroups.Select(m =>
         {
-            var testMethod = m.Key as IXunitTestMethod;
+            var testMethod = m.Key;
             var testCases = m.ToArray();
 
             if (exception is not null)
@@ -83,7 +83,7 @@ public class ParallelTestClassRunner : XunitTestClassRunnerBase<XunitTestClassRu
 
             return new ParallelTestMethodRunner(_parallelTestExecutionContext)
                 .Run(
-                    testMethod ?? throw new ArgumentNullException(nameof(testMethod)),
+                    testMethod,
                     testCases,
                     ctxt.ExplicitOption,
                     ctxt.MessageBus,

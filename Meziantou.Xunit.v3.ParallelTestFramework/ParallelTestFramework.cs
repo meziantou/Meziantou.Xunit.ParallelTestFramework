@@ -7,6 +7,6 @@ public class ParallelTestFramework : XunitTestFramework
 {
     protected override ITestFrameworkExecutor CreateExecutor(Assembly assembly)
     {
-        return new ParallelTestFrameworkExecutor(new XunitTestAssembly(assembly));
+        return new ParallelTestFrameworkExecutor(new XunitTestAssembly(assembly, null));
     }
 }
